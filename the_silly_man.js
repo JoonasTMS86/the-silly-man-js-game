@@ -1,81 +1,84 @@
 var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata, gametitleClownSpriteFrame, gametitleClownSpriteTimer;
-var fullSizeWidth                  = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
-var fullSizeHeight                 = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
-var keyDown                        = false;
-var goingup                        = false;
-var goingdown                      = false;
-var goingleft                      = false;
-var goingright                     = false;
-var spacePressed                   = false;
-var mustReleaseKey                 = false;
-var mainGfxBuffer                  = document.getElementById("mainGfxBuffer");
-var mainGfxBufferCtx               = mainGfxBuffer.getContext("2d");
-var doubleGfxBuffer                = document.getElementById("doubleGfxBuffer");
-var doubleGfxBufferCtx             = doubleGfxBuffer.getContext("2d");
-var gfx_gametitlebgSprite          = document.getElementById("gfx_gametitlebg");
-var gfx_gametitleletter1Buffer     = document.getElementById("gfx_gametitleletter1Buffer");
-var gfx_gametitleletter1Ctx        = gfx_gametitleletter1Buffer.getContext("2d");
-var gfx_gametitleletter1Sdata      = gfx_gametitleletter1Ctx.createImageData(370, 336);
-var gfx_gametitleletter1Sprite     = document.getElementById("gfx_gametitleletter1");
-var gfx_gametitleletter2Buffer     = document.getElementById("gfx_gametitleletter2Buffer");
-var gfx_gametitleletter2Ctx        = gfx_gametitleletter2Buffer.getContext("2d");
-var gfx_gametitleletter2Sdata      = gfx_gametitleletter2Ctx.createImageData(370, 336);
-var gfx_gametitleletter2Sprite     = document.getElementById("gfx_gametitleletter2");
-var gfx_gametitleletter3Buffer     = document.getElementById("gfx_gametitleletter3Buffer");
-var gfx_gametitleletter3Ctx        = gfx_gametitleletter3Buffer.getContext("2d");
-var gfx_gametitleletter3Sdata      = gfx_gametitleletter3Ctx.createImageData(370, 336);
-var gfx_gametitleletter3Sprite     = document.getElementById("gfx_gametitleletter3");
-var gfx_gametitleletter4Buffer     = document.getElementById("gfx_gametitleletter4Buffer");
-var gfx_gametitleletter4Ctx        = gfx_gametitleletter4Buffer.getContext("2d");
-var gfx_gametitleletter4Sdata      = gfx_gametitleletter4Ctx.createImageData(370, 336);
-var gfx_gametitleletter4Sprite     = document.getElementById("gfx_gametitleletter4");
-var gfx_gametitleletter5Buffer     = document.getElementById("gfx_gametitleletter5Buffer");
-var gfx_gametitleletter5Ctx        = gfx_gametitleletter5Buffer.getContext("2d");
-var gfx_gametitleletter5Sdata      = gfx_gametitleletter5Ctx.createImageData(370, 336);
-var gfx_gametitleletter5Sprite     = document.getElementById("gfx_gametitleletter5");
-var gfx_gametitleletter6Buffer     = document.getElementById("gfx_gametitleletter6Buffer");
-var gfx_gametitleletter6Ctx        = gfx_gametitleletter6Buffer.getContext("2d");
-var gfx_gametitleletter6Sdata      = gfx_gametitleletter6Ctx.createImageData(370, 336);
-var gfx_gametitleletter6Sprite     = document.getElementById("gfx_gametitleletter6");
-var gfx_gametitleletter7Buffer     = document.getElementById("gfx_gametitleletter7Buffer");
-var gfx_gametitleletter7Ctx        = gfx_gametitleletter7Buffer.getContext("2d");
-var gfx_gametitleletter7Sdata      = gfx_gametitleletter7Ctx.createImageData(370, 336);
-var gfx_gametitleletter7Sprite     = document.getElementById("gfx_gametitleletter7");
-var gfx_gametitleletter8Buffer     = document.getElementById("gfx_gametitleletter8Buffer");
-var gfx_gametitleletter8Ctx        = gfx_gametitleletter8Buffer.getContext("2d");
-var gfx_gametitleletter8Sdata      = gfx_gametitleletter8Ctx.createImageData(370, 336);
-var gfx_gametitleletter8Sprite     = document.getElementById("gfx_gametitleletter8");
-var gfx_gametitleletter9Buffer     = document.getElementById("gfx_gametitleletter9Buffer");
-var gfx_gametitleletter9Ctx        = gfx_gametitleletter9Buffer.getContext("2d");
-var gfx_gametitleletter9Sdata      = gfx_gametitleletter9Ctx.createImageData(370, 336);
-var gfx_gametitleletter9Sprite     = document.getElementById("gfx_gametitleletter9");
-var gfx_gametitleletter10Buffer    = document.getElementById("gfx_gametitleletter10Buffer");
-var gfx_gametitleletter10Ctx       = gfx_gametitleletter10Buffer.getContext("2d");
-var gfx_gametitleletter10Sdata     = gfx_gametitleletter10Ctx.createImageData(370, 336);
-var gfx_gametitleletter10Sprite    = document.getElementById("gfx_gametitleletter10");
-var gfx_gametitleletter11Buffer    = document.getElementById("gfx_gametitleletter11Buffer");
-var gfx_gametitleletter11Ctx       = gfx_gametitleletter11Buffer.getContext("2d");
-var gfx_gametitleletter11Sdata     = gfx_gametitleletter11Ctx.createImageData(370, 336);
-var gfx_gametitleletter11Sprite    = document.getElementById("gfx_gametitleletter11");
-var gfx_gametitleclownframe1Buffer = document.getElementById("gfx_gametitleclownframe1Buffer");
-var gfx_gametitleclownframe1Ctx    = gfx_gametitleclownframe1Buffer.getContext("2d");
-var gfx_gametitleclownframe1Sdata  = gfx_gametitleclownframe1Ctx.createImageData(406, 573);
-var gfx_gametitleclownframe1Sprite = document.getElementById("gfx_gametitleclownframe1");
-var gfx_gametitleclownframe2Buffer = document.getElementById("gfx_gametitleclownframe2Buffer");
-var gfx_gametitleclownframe2Ctx    = gfx_gametitleclownframe2Buffer.getContext("2d");
-var gfx_gametitleclownframe2Sdata  = gfx_gametitleclownframe2Ctx.createImageData(406, 573);
-var gfx_gametitleclownframe2Sprite = document.getElementById("gfx_gametitleclownframe2");
-var gfx_gametitleclownframe3Buffer = document.getElementById("gfx_gametitleclownframe3Buffer");
-var gfx_gametitleclownframe3Ctx    = gfx_gametitleclownframe3Buffer.getContext("2d");
-var gfx_gametitleclownframe3Sdata  = gfx_gametitleclownframe3Ctx.createImageData(406, 573);
-var gfx_gametitleclownframe3Sprite = document.getElementById("gfx_gametitleclownframe3");
-var gfx_gametitleclownframe4Buffer = document.getElementById("gfx_gametitleclownframe4Buffer");
-var gfx_gametitleclownframe4Ctx    = gfx_gametitleclownframe4Buffer.getContext("2d");
-var gfx_gametitleclownframe4Sdata  = gfx_gametitleclownframe4Ctx.createImageData(406, 573);
-var gfx_gametitleclownframe4Sprite = document.getElementById("gfx_gametitleclownframe4");
+var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
+var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
+var keyDown                                  = false;
+var goingup                                  = false;
+var goingdown                                = false;
+var goingleft                                = false;
+var goingright                               = false;
+var spacePressed                             = false;
+var mustReleaseKey                           = false;
+var mainGfxBuffer                            = document.getElementById("mainGfxBuffer");
+var mainGfxBufferCtx                         = mainGfxBuffer.getContext("2d");
+var doubleGfxBuffer                          = document.getElementById("doubleGfxBuffer");
+var doubleGfxBufferCtx                       = doubleGfxBuffer.getContext("2d");
+var gfxScaledToCurrentDeviceResolutionBuffer = document.getElementById("gfxScaledToCurrentDeviceResolutionBuffer");
+var gfxScaledToCurrentDeviceResolutionCtx    = gfxScaledToCurrentDeviceResolutionBuffer.getContext("2d");
+var gfxScaledToCurrentDeviceResolutionSdata  = gfxScaledToCurrentDeviceResolutionCtx.createImageData(1910, 909);
+var gfx_gametitlebgSprite                    = document.getElementById("gfx_gametitlebg");
+var gfx_gametitleletter1Buffer               = document.getElementById("gfx_gametitleletter1Buffer");
+var gfx_gametitleletter1Ctx                  = gfx_gametitleletter1Buffer.getContext("2d");
+var gfx_gametitleletter1Sdata                = gfx_gametitleletter1Ctx.createImageData(370, 336);
+var gfx_gametitleletter1Sprite               = document.getElementById("gfx_gametitleletter1");
+var gfx_gametitleletter2Buffer               = document.getElementById("gfx_gametitleletter2Buffer");
+var gfx_gametitleletter2Ctx                  = gfx_gametitleletter2Buffer.getContext("2d");
+var gfx_gametitleletter2Sdata                = gfx_gametitleletter2Ctx.createImageData(370, 336);
+var gfx_gametitleletter2Sprite               = document.getElementById("gfx_gametitleletter2");
+var gfx_gametitleletter3Buffer               = document.getElementById("gfx_gametitleletter3Buffer");
+var gfx_gametitleletter3Ctx                  = gfx_gametitleletter3Buffer.getContext("2d");
+var gfx_gametitleletter3Sdata                = gfx_gametitleletter3Ctx.createImageData(370, 336);
+var gfx_gametitleletter3Sprite               = document.getElementById("gfx_gametitleletter3");
+var gfx_gametitleletter4Buffer               = document.getElementById("gfx_gametitleletter4Buffer");
+var gfx_gametitleletter4Ctx                  = gfx_gametitleletter4Buffer.getContext("2d");
+var gfx_gametitleletter4Sdata                = gfx_gametitleletter4Ctx.createImageData(370, 336);
+var gfx_gametitleletter4Sprite               = document.getElementById("gfx_gametitleletter4");
+var gfx_gametitleletter5Buffer               = document.getElementById("gfx_gametitleletter5Buffer");
+var gfx_gametitleletter5Ctx                  = gfx_gametitleletter5Buffer.getContext("2d");
+var gfx_gametitleletter5Sdata                = gfx_gametitleletter5Ctx.createImageData(370, 336);
+var gfx_gametitleletter5Sprite               = document.getElementById("gfx_gametitleletter5");
+var gfx_gametitleletter6Buffer               = document.getElementById("gfx_gametitleletter6Buffer");
+var gfx_gametitleletter6Ctx                  = gfx_gametitleletter6Buffer.getContext("2d");
+var gfx_gametitleletter6Sdata                = gfx_gametitleletter6Ctx.createImageData(370, 336);
+var gfx_gametitleletter6Sprite               = document.getElementById("gfx_gametitleletter6");
+var gfx_gametitleletter7Buffer               = document.getElementById("gfx_gametitleletter7Buffer");
+var gfx_gametitleletter7Ctx                  = gfx_gametitleletter7Buffer.getContext("2d");
+var gfx_gametitleletter7Sdata                = gfx_gametitleletter7Ctx.createImageData(370, 336);
+var gfx_gametitleletter7Sprite               = document.getElementById("gfx_gametitleletter7");
+var gfx_gametitleletter8Buffer               = document.getElementById("gfx_gametitleletter8Buffer");
+var gfx_gametitleletter8Ctx                  = gfx_gametitleletter8Buffer.getContext("2d");
+var gfx_gametitleletter8Sdata                = gfx_gametitleletter8Ctx.createImageData(370, 336);
+var gfx_gametitleletter8Sprite               = document.getElementById("gfx_gametitleletter8");
+var gfx_gametitleletter9Buffer               = document.getElementById("gfx_gametitleletter9Buffer");
+var gfx_gametitleletter9Ctx                  = gfx_gametitleletter9Buffer.getContext("2d");
+var gfx_gametitleletter9Sdata                = gfx_gametitleletter9Ctx.createImageData(370, 336);
+var gfx_gametitleletter9Sprite               = document.getElementById("gfx_gametitleletter9");
+var gfx_gametitleletter10Buffer              = document.getElementById("gfx_gametitleletter10Buffer");
+var gfx_gametitleletter10Ctx                 = gfx_gametitleletter10Buffer.getContext("2d");
+var gfx_gametitleletter10Sdata               = gfx_gametitleletter10Ctx.createImageData(370, 336);
+var gfx_gametitleletter10Sprite              = document.getElementById("gfx_gametitleletter10");
+var gfx_gametitleletter11Buffer              = document.getElementById("gfx_gametitleletter11Buffer");
+var gfx_gametitleletter11Ctx                 = gfx_gametitleletter11Buffer.getContext("2d");
+var gfx_gametitleletter11Sdata               = gfx_gametitleletter11Ctx.createImageData(370, 336);
+var gfx_gametitleletter11Sprite              = document.getElementById("gfx_gametitleletter11");
+var gfx_gametitleclownframe1Buffer           = document.getElementById("gfx_gametitleclownframe1Buffer");
+var gfx_gametitleclownframe1Ctx              = gfx_gametitleclownframe1Buffer.getContext("2d");
+var gfx_gametitleclownframe1Sdata            = gfx_gametitleclownframe1Ctx.createImageData(406, 573);
+var gfx_gametitleclownframe1Sprite           = document.getElementById("gfx_gametitleclownframe1");
+var gfx_gametitleclownframe2Buffer           = document.getElementById("gfx_gametitleclownframe2Buffer");
+var gfx_gametitleclownframe2Ctx              = gfx_gametitleclownframe2Buffer.getContext("2d");
+var gfx_gametitleclownframe2Sdata            = gfx_gametitleclownframe2Ctx.createImageData(406, 573);
+var gfx_gametitleclownframe2Sprite           = document.getElementById("gfx_gametitleclownframe2");
+var gfx_gametitleclownframe3Buffer           = document.getElementById("gfx_gametitleclownframe3Buffer");
+var gfx_gametitleclownframe3Ctx              = gfx_gametitleclownframe3Buffer.getContext("2d");
+var gfx_gametitleclownframe3Sdata            = gfx_gametitleclownframe3Ctx.createImageData(406, 573);
+var gfx_gametitleclownframe3Sprite           = document.getElementById("gfx_gametitleclownframe3");
+var gfx_gametitleclownframe4Buffer           = document.getElementById("gfx_gametitleclownframe4Buffer");
+var gfx_gametitleclownframe4Ctx              = gfx_gametitleclownframe4Buffer.getContext("2d");
+var gfx_gametitleclownframe4Sdata            = gfx_gametitleclownframe4Ctx.createImageData(406, 573);
+var gfx_gametitleclownframe4Sprite           = document.getElementById("gfx_gametitleclownframe4");
 
-const snd_sillyman001              = new Audio("sillyman001.wav");
-var titleletterCoords              = [
+const snd_sillyman001                        = new Audio("sillyman001.wav");
+var titleletterCoords                        = [
 	0, 0,
 	0, 0,
 	0, 0,
@@ -88,7 +91,7 @@ var titleletterCoords              = [
 	0, 0,
 	0, 0
 ];
-const titleletterDeltas            = [
+const titleletterDeltas                      = [
 	-5, -5,
 	5, 0,
 	-5, 0,
@@ -101,7 +104,7 @@ const titleletterDeltas            = [
 	-11, 5,
 	-8, 8
 ];
-const titleletterTargetCoords      = [
+const titleletterTargetCoords                = [
 	0, 0,
 	250, 0,
 	500, 0,
@@ -214,6 +217,35 @@ function doSpriteTransparency(givenbufferctx, givenbuffer, givenpic, keyR, keyG,
 }
 
 window.onload = function() {
+	// Detect the resolution of the user's device in order to scale images correctly.
+	screen_width  = window.screen.availWidth;
+	screen_height = window.screen.availHeight;
+
+	console.log("SCREEN DIMENSIONS: " + screen_width + " x " + screen_height);
+
+	var gfx1 = document.getElementById("mainGfxBuffer");
+	var gfx2 = document.getElementById("doubleGfxBuffer");
+	deviceWidth = screen_width - 10;
+	deviceHeight = screen_height - 137;
+	if(screen_height == 768) deviceHeight = 599;
+	// Resolutions:
+	// * 1920 x 1080 (1920 x 1046) (1910 x 909)
+	// * 1366 x 768 (1366 x 736) (1356 x 599)
+	// * 412 x 915 (412 x 915) (402 x 778) portrait, 915 x 412 (915 x 412) (905 x 275) landscape
+
+	gfx1.width = deviceWidth;
+	gfx1.height = deviceHeight;
+	gfx2.width = deviceWidth;
+	gfx2.height = deviceHeight;
+
+	mainGfxBufferSdata = mainGfxBufferCtx.createImageData(fullSizeWidth, fullSizeHeight);
+	mainGfxBufferCtx.putImageData(mainGfxBufferSdata, 0, 0);
+	mainGfxBufferSdata = mainGfxBufferCtx.getImageData(0, 0, mainGfxBuffer.width, mainGfxBuffer.height);
+
+	doubleGfxBufferSdata = doubleGfxBufferCtx.createImageData(fullSizeWidth, fullSizeHeight);
+	doubleGfxBufferCtx.putImageData(doubleGfxBufferSdata, 0, 0);
+	doubleGfxBufferSdata = doubleGfxBufferCtx.getImageData(0, 0, doubleGfxBuffer.width, doubleGfxBuffer.height);
+
 	titleletterCoords[0] = 1300;
 	titleletterCoords[1] = 1300;
 	titleletterCoords[2] = -300;
@@ -302,19 +334,19 @@ window.onload = function() {
 function play(delta)
 {
 	if(mainGfxBufferSdata != null) {
-		mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitlebgSprite, 0, 0);
 		switch(gametitleClownSpriteFrame) {
 			case 0:
-				mainGfxBufferCtx.drawImage(gfx_gametitleclownframe1Buffer, 625, 350);
+				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe1Buffer, 625, 350);
 				break;
 			case 1:
-				mainGfxBufferCtx.drawImage(gfx_gametitleclownframe2Buffer, 625, 350);
+				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe2Buffer, 625, 350);
 				break;
 			case 2:
-				mainGfxBufferCtx.drawImage(gfx_gametitleclownframe3Buffer, 625, 350);
+				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe3Buffer, 625, 350);
 				break;
 			case 3:
-				mainGfxBufferCtx.drawImage(gfx_gametitleclownframe4Buffer, 625, 350);
+				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe4Buffer, 625, 350);
 				break;
 		}
 		gametitleClownSpriteTimer++;
@@ -325,17 +357,20 @@ function play(delta)
 				gametitleClownSpriteFrame = 0;
 			}
 		}
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter11Buffer, titleletterCoords[20], titleletterCoords[21]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter10Buffer, titleletterCoords[18], titleletterCoords[19]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter9Buffer, titleletterCoords[16], titleletterCoords[17]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter8Buffer, titleletterCoords[14], titleletterCoords[15]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter7Buffer, titleletterCoords[12], titleletterCoords[13]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter6Buffer, titleletterCoords[10], titleletterCoords[11]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter5Buffer, titleletterCoords[8], titleletterCoords[9]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter4Buffer, titleletterCoords[6], titleletterCoords[7]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter3Buffer, titleletterCoords[4], titleletterCoords[5]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter2Buffer, titleletterCoords[2], titleletterCoords[3]);
-		mainGfxBufferCtx.drawImage(gfx_gametitleletter1Buffer, titleletterCoords[0], titleletterCoords[1]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter11Buffer, titleletterCoords[20], titleletterCoords[21]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter10Buffer, titleletterCoords[18], titleletterCoords[19]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter9Buffer, titleletterCoords[16], titleletterCoords[17]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter8Buffer, titleletterCoords[14], titleletterCoords[15]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter7Buffer, titleletterCoords[12], titleletterCoords[13]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter6Buffer, titleletterCoords[10], titleletterCoords[11]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter5Buffer, titleletterCoords[8], titleletterCoords[9]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter4Buffer, titleletterCoords[6], titleletterCoords[7]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter3Buffer, titleletterCoords[4], titleletterCoords[5]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter2Buffer, titleletterCoords[2], titleletterCoords[3]);
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter1Buffer, titleletterCoords[0], titleletterCoords[1]);
+
+		doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
+		mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
 
 		for(var currentLetter = 0; currentLetter < 11; currentLetter++) {
 			titleletterCoords[(currentLetter * 2) + 0] += titleletterDeltas[(currentLetter * 2) + 0];
