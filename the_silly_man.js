@@ -1,4 +1,5 @@
-var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata, gametitleClownSpriteFrame, gametitleClownSpriteTimer;
+var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata,
+gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX;
 var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var keyDown                                  = false;
@@ -216,6 +217,35 @@ function doSpriteTransparency(givenbufferctx, givenbuffer, givenpic, keyR, keyG,
 	givenbufferctx.putImageData(givenpic, 0, 0);
 }
 
+function resetTitleScreen() {
+	titleletterCoords[0] = 1300;
+	titleletterCoords[1] = 1300;
+	titleletterCoords[2] = -300;
+	titleletterCoords[3] = 0;
+	titleletterCoords[4] = 2100;
+	titleletterCoords[5] = 0;
+	titleletterCoords[6] = 2100;
+	titleletterCoords[7] = -100;
+	titleletterCoords[8] = 2550;
+	titleletterCoords[9] = -200;
+	titleletterCoords[10] = 3000;
+	titleletterCoords[11] = -300;
+	titleletterCoords[12] = 3450;
+	titleletterCoords[13] = -400;
+	titleletterCoords[14] = 3900;
+	titleletterCoords[15] = -500;
+	titleletterCoords[16] = 1300;
+	titleletterCoords[17] = -400;
+	titleletterCoords[18] = 1600;
+	titleletterCoords[19] = 250;
+	titleletterCoords[20] = 1900;
+	titleletterCoords[21] = 0;
+	gametitleClownSpriteFrame = 0;
+	gametitleClownSpriteTimer = 0;
+	snd_sillyman001.play();
+	titleScrollTextX = 1910;
+}
+
 window.onload = function() {
 	// Detect the resolution of the user's device in order to scale images correctly.
 	screen_width  = window.screen.availWidth;
@@ -246,30 +276,7 @@ window.onload = function() {
 	doubleGfxBufferCtx.putImageData(doubleGfxBufferSdata, 0, 0);
 	doubleGfxBufferSdata = doubleGfxBufferCtx.getImageData(0, 0, doubleGfxBuffer.width, doubleGfxBuffer.height);
 
-	titleletterCoords[0] = 1300;
-	titleletterCoords[1] = 1300;
-	titleletterCoords[2] = -300;
-	titleletterCoords[3] = 0;
-	titleletterCoords[4] = 2100;
-	titleletterCoords[5] = 0;
-	titleletterCoords[6] = 2100;
-	titleletterCoords[7] = -100;
-	titleletterCoords[8] = 2550;
-	titleletterCoords[9] = -200;
-	titleletterCoords[10] = 3000;
-	titleletterCoords[11] = -300;
-	titleletterCoords[12] = 3450;
-	titleletterCoords[13] = -400;
-	titleletterCoords[14] = 3900;
-	titleletterCoords[15] = -500;
-	titleletterCoords[16] = 1300;
-	titleletterCoords[17] = -400;
-	titleletterCoords[18] = 1600;
-	titleletterCoords[19] = 250;
-	titleletterCoords[20] = 1900;
-	titleletterCoords[21] = 0;
-	gametitleClownSpriteFrame = 0;
-	gametitleClownSpriteTimer = 0;
+	resetTitleScreen();
 
 	mainGfxBufferSdata = mainGfxBufferCtx.createImageData(fullSizeWidth, fullSizeHeight);
 	mainGfxBufferCtx.putImageData(mainGfxBufferSdata, 0, 0);
@@ -328,7 +335,6 @@ window.onload = function() {
 	doSpriteTransparency(gfx_gametitleclownframe3Ctx, gfx_gametitleclownframe3Buffer, gfx_gametitleclownframe3Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleclownframe4Ctx, gfx_gametitleclownframe4Buffer, gfx_gametitleclownframe4Sdata, 255, 255, 255);
 
-	snd_sillyman001.play();
 };
 
 function play(delta)
@@ -369,6 +375,10 @@ function play(delta)
 		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter2Buffer, titleletterCoords[2], titleletterCoords[3]);
 		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter1Buffer, titleletterCoords[0], titleletterCoords[1]);
 
+		gfxScaledToCurrentDeviceResolutionCtx.font = "bold 70px Arial";
+		gfxScaledToCurrentDeviceResolutionCtx.fillStyle = "#008888";
+		gfxScaledToCurrentDeviceResolutionCtx.fillText("2026 Joonas Lindberg. Code, graphics & sound: Joonas Lindberg. Press Space to start the game.", titleScrollTextX, 454);
+
 		doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
 		mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
 
@@ -399,8 +409,10 @@ function play(delta)
 				}
 			}
 		}
-
-
+		titleScrollTextX -= 3;
+		if(titleScrollTextX < -4000) {
+			titleScrollTextX = 1910;
+		}
 	}
 }
 
