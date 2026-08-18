@@ -1,5 +1,6 @@
 var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata,
-gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX;
+gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX,
+currentScreen, playerX, playerY, playerAnimFrame;
 var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var keyDown                                  = false;
@@ -77,6 +78,19 @@ var gfx_gametitleclownframe4Buffer           = document.getElementById("gfx_game
 var gfx_gametitleclownframe4Ctx              = gfx_gametitleclownframe4Buffer.getContext("2d");
 var gfx_gametitleclownframe4Sdata            = gfx_gametitleclownframe4Ctx.createImageData(406, 573);
 var gfx_gametitleclownframe4Sprite           = document.getElementById("gfx_gametitleclownframe4");
+var gfx_backgroundSprite                     = document.getElementById("gfx_background");
+var gfx_facingeBuffer                        = document.getElementById("gfx_facingeBuffer");
+var gfx_facingeCtx                           = gfx_facingeBuffer.getContext("2d");
+var gfx_facingeSdata                         = gfx_facingeCtx.createImageData(228, 345);
+var gfx_facingeSprite                        = document.getElementById("gfx_facinge");
+var gfx_walke1Buffer                         = document.getElementById("gfx_walke1Buffer");
+var gfx_walke1Ctx                            = gfx_walke1Buffer.getContext("2d");
+var gfx_walke1Sdata                          = gfx_walke1Ctx.createImageData(228, 345);
+var gfx_walke1Sprite                         = document.getElementById("gfx_walke1");
+var gfx_walke2Buffer                         = document.getElementById("gfx_walke2Buffer");
+var gfx_walke2Ctx                            = gfx_walke2Buffer.getContext("2d");
+var gfx_walke2Sdata                          = gfx_walke2Ctx.createImageData(228, 345);
+var gfx_walke2Sprite                         = document.getElementById("gfx_walke2");
 
 const snd_sillyman001                        = new Audio("sillyman001.wav");
 var titleletterCoords                        = [
@@ -118,6 +132,11 @@ const titleletterTargetCoords                = [
 	300, 500,
 	600, 500
 ];
+const anims = [
+	gfx_walke1Buffer, gfx_walke1Buffer, gfx_walke1Buffer, gfx_walke1Buffer, gfx_walke1Buffer,
+	gfx_walke2Buffer, gfx_walke2Buffer, gfx_walke2Buffer, gfx_walke2Buffer, gfx_walke2Buffer
+];
+const playerMovementSpeed = 5;
 
 let Application = PIXI.Application,
 	Container = PIXI.Container,
@@ -218,6 +237,7 @@ function doSpriteTransparency(givenbufferctx, givenbuffer, givenpic, keyR, keyG,
 }
 
 function resetTitleScreen() {
+	currentScreen = 0;
 	titleletterCoords[0] = 1300;
 	titleletterCoords[1] = 1300;
 	titleletterCoords[2] = -300;
@@ -302,6 +322,9 @@ window.onload = function() {
 	gfx_gametitleclownframe2Ctx.drawImage(gfx_gametitleclownframe2Sprite, 0, 0);
 	gfx_gametitleclownframe3Ctx.drawImage(gfx_gametitleclownframe3Sprite, 0, 0);
 	gfx_gametitleclownframe4Ctx.drawImage(gfx_gametitleclownframe4Sprite, 0, 0);
+	gfx_facingeCtx.drawImage(gfx_facingeSprite, 0, 0);
+	gfx_walke1Ctx.drawImage(gfx_walke1Sprite, 0, 0);
+	gfx_walke2Ctx.drawImage(gfx_walke2Sprite, 0, 0);
 
 	gfx_gametitleletter1Sdata = gfx_gametitleletter1Ctx.getImageData(0, 0, gfx_gametitleletter1Buffer.width, gfx_gametitleletter1Buffer.height);
 	gfx_gametitleletter2Sdata = gfx_gametitleletter2Ctx.getImageData(0, 0, gfx_gametitleletter2Buffer.width, gfx_gametitleletter2Buffer.height);
@@ -318,6 +341,9 @@ window.onload = function() {
 	gfx_gametitleclownframe2Sdata = gfx_gametitleclownframe2Ctx.getImageData(0, 0, gfx_gametitleclownframe2Buffer.width, gfx_gametitleclownframe2Buffer.height);
 	gfx_gametitleclownframe3Sdata = gfx_gametitleclownframe3Ctx.getImageData(0, 0, gfx_gametitleclownframe3Buffer.width, gfx_gametitleclownframe3Buffer.height);
 	gfx_gametitleclownframe4Sdata = gfx_gametitleclownframe4Ctx.getImageData(0, 0, gfx_gametitleclownframe4Buffer.width, gfx_gametitleclownframe4Buffer.height);
+	gfx_facingeSdata = gfx_facingeCtx.getImageData(0, 0, gfx_facingeBuffer.width, gfx_facingeBuffer.height);
+	gfx_walke1Sdata = gfx_walke1Ctx.getImageData(0, 0, gfx_walke1Buffer.width, gfx_walke1Buffer.height);
+	gfx_walke2Sdata = gfx_walke2Ctx.getImageData(0, 0, gfx_walke2Buffer.width, gfx_walke2Buffer.height);
 
 	doSpriteTransparency(gfx_gametitleletter1Ctx, gfx_gametitleletter1Buffer, gfx_gametitleletter1Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleletter2Ctx, gfx_gametitleletter2Buffer, gfx_gametitleletter2Sdata, 255, 255, 255);
@@ -334,84 +360,140 @@ window.onload = function() {
 	doSpriteTransparency(gfx_gametitleclownframe2Ctx, gfx_gametitleclownframe2Buffer, gfx_gametitleclownframe2Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleclownframe3Ctx, gfx_gametitleclownframe3Buffer, gfx_gametitleclownframe3Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleclownframe4Ctx, gfx_gametitleclownframe4Buffer, gfx_gametitleclownframe4Sdata, 255, 255, 255);
+	doSpriteTransparency(gfx_facingeCtx, gfx_facingeBuffer, gfx_facingeSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_walke1Ctx, gfx_walke1Buffer, gfx_walke1Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_walke2Ctx, gfx_walke2Buffer, gfx_walke2Sdata, 255, 119, 0);
 
 };
+
+function doTitleStuff() {
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitlebgSprite, 0, 0);
+	switch(gametitleClownSpriteFrame) {
+		case 0:
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe1Buffer, 625, 350);
+			break;
+		case 1:
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe2Buffer, 625, 350);
+			break;
+		case 2:
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe3Buffer, 625, 350);
+			break;
+		case 3:
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe4Buffer, 625, 350);
+			break;
+	}
+	gametitleClownSpriteTimer++;
+	if(gametitleClownSpriteTimer >= 6) {
+		gametitleClownSpriteTimer = 0;
+		gametitleClownSpriteFrame++;
+		if(gametitleClownSpriteFrame >= 4) {
+			gametitleClownSpriteFrame = 0;
+		}
+	}
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter11Buffer, titleletterCoords[20], titleletterCoords[21]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter10Buffer, titleletterCoords[18], titleletterCoords[19]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter9Buffer, titleletterCoords[16], titleletterCoords[17]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter8Buffer, titleletterCoords[14], titleletterCoords[15]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter7Buffer, titleletterCoords[12], titleletterCoords[13]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter6Buffer, titleletterCoords[10], titleletterCoords[11]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter5Buffer, titleletterCoords[8], titleletterCoords[9]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter4Buffer, titleletterCoords[6], titleletterCoords[7]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter3Buffer, titleletterCoords[4], titleletterCoords[5]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter2Buffer, titleletterCoords[2], titleletterCoords[3]);
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter1Buffer, titleletterCoords[0], titleletterCoords[1]);
+
+	gfxScaledToCurrentDeviceResolutionCtx.font = "bold 70px Arial";
+	gfxScaledToCurrentDeviceResolutionCtx.fillStyle = "#008888";
+	gfxScaledToCurrentDeviceResolutionCtx.fillText("2026 Joonas Lindberg. Code, graphics & sound: Joonas Lindberg. Press Space to start the game.", titleScrollTextX, 454);
+
+	doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
+	mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
+
+	for(var currentLetter = 0; currentLetter < 11; currentLetter++) {
+		titleletterCoords[(currentLetter * 2) + 0] += titleletterDeltas[(currentLetter * 2) + 0];
+		titleletterCoords[(currentLetter * 2) + 1] += titleletterDeltas[(currentLetter * 2) + 1];
+	}
+
+	for(var currentLetter = 0; currentLetter < 11; currentLetter++) {
+		if(titleletterDeltas[(currentLetter * 2) + 0] < 0) {
+			if(titleletterCoords[(currentLetter * 2) + 0] <= titleletterTargetCoords[(currentLetter * 2) + 0]) {
+				titleletterCoords[(currentLetter * 2) + 0] = titleletterTargetCoords[(currentLetter * 2) + 0];
+			}
+		}
+		else {
+			if(titleletterCoords[(currentLetter * 2) + 0] >= titleletterTargetCoords[(currentLetter * 2) + 0]) {
+				titleletterCoords[(currentLetter * 2) + 0] = titleletterTargetCoords[(currentLetter * 2) + 0];
+			}
+		}
+		if(titleletterDeltas[(currentLetter * 2) + 1] < 0) {
+			if(titleletterCoords[(currentLetter * 2) + 1] <= titleletterTargetCoords[(currentLetter * 2) + 1]) {
+				titleletterCoords[(currentLetter * 2) + 1] = titleletterTargetCoords[(currentLetter * 2) + 1];
+			}
+		}
+		else {
+			if(titleletterCoords[(currentLetter * 2) + 1] >= titleletterTargetCoords[(currentLetter * 2) + 1]) {
+				titleletterCoords[(currentLetter * 2) + 1] = titleletterTargetCoords[(currentLetter * 2) + 1];
+			}
+		}
+	}
+	titleScrollTextX -= 3;
+	if(titleScrollTextX < -4000) {
+		titleScrollTextX = 1910;
+	}
+	if(spacePressed) {
+		currentScreen = 1;
+		playerX = 50;
+		playerY = 50;
+		playerAnimFrame = 0;
+	}
+}
+
+function doGameStuff() {
+	var playerMoving = false;
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_backgroundSprite, 0, 0);
+	if(goingup) {
+		playerMoving = true;
+		playerY -= playerMovementSpeed;
+		if(playerY < -5) playerY = -5;
+	}
+	if(goingdown) {
+		playerMoving = true;
+		playerY += playerMovementSpeed;
+		if(playerY > 445) playerY = 445;
+	}
+	if(goingleft) {
+		playerMoving = true;
+		playerX -= playerMovementSpeed;
+		if(playerX < -10) playerX = -10;
+	}
+	if(goingright) {
+		playerMoving = true;
+		playerX += playerMovementSpeed;
+		if(playerX > 1800) playerX = 1800;
+	}
+	if(playerMoving) {
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(anims[playerAnimFrame], playerX, playerY);
+		playerAnimFrame++;
+		if(playerAnimFrame >= anims.length) {
+			playerAnimFrame = 0;
+		}
+	}
+	else {
+		playerAnimFrame = 0;
+		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingeBuffer, playerX, playerY);
+	}
+	doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
+	mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
+}
 
 function play(delta)
 {
 	if(mainGfxBufferSdata != null) {
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitlebgSprite, 0, 0);
-		switch(gametitleClownSpriteFrame) {
-			case 0:
-				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe1Buffer, 625, 350);
-				break;
-			case 1:
-				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe2Buffer, 625, 350);
-				break;
-			case 2:
-				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe3Buffer, 625, 350);
-				break;
-			case 3:
-				gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleclownframe4Buffer, 625, 350);
-				break;
+		if(currentScreen == 0) {
+			doTitleStuff();
 		}
-		gametitleClownSpriteTimer++;
-		if(gametitleClownSpriteTimer >= 6) {
-			gametitleClownSpriteTimer = 0;
-			gametitleClownSpriteFrame++;
-			if(gametitleClownSpriteFrame >= 4) {
-				gametitleClownSpriteFrame = 0;
-			}
-		}
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter11Buffer, titleletterCoords[20], titleletterCoords[21]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter10Buffer, titleletterCoords[18], titleletterCoords[19]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter9Buffer, titleletterCoords[16], titleletterCoords[17]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter8Buffer, titleletterCoords[14], titleletterCoords[15]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter7Buffer, titleletterCoords[12], titleletterCoords[13]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter6Buffer, titleletterCoords[10], titleletterCoords[11]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter5Buffer, titleletterCoords[8], titleletterCoords[9]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter4Buffer, titleletterCoords[6], titleletterCoords[7]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter3Buffer, titleletterCoords[4], titleletterCoords[5]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter2Buffer, titleletterCoords[2], titleletterCoords[3]);
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitleletter1Buffer, titleletterCoords[0], titleletterCoords[1]);
-
-		gfxScaledToCurrentDeviceResolutionCtx.font = "bold 70px Arial";
-		gfxScaledToCurrentDeviceResolutionCtx.fillStyle = "#008888";
-		gfxScaledToCurrentDeviceResolutionCtx.fillText("2026 Joonas Lindberg. Code, graphics & sound: Joonas Lindberg. Press Space to start the game.", titleScrollTextX, 454);
-
-		doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
-		mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
-
-		for(var currentLetter = 0; currentLetter < 11; currentLetter++) {
-			titleletterCoords[(currentLetter * 2) + 0] += titleletterDeltas[(currentLetter * 2) + 0];
-			titleletterCoords[(currentLetter * 2) + 1] += titleletterDeltas[(currentLetter * 2) + 1];
-		}
-
-		for(var currentLetter = 0; currentLetter < 11; currentLetter++) {
-			if(titleletterDeltas[(currentLetter * 2) + 0] < 0) {
-				if(titleletterCoords[(currentLetter * 2) + 0] <= titleletterTargetCoords[(currentLetter * 2) + 0]) {
-					titleletterCoords[(currentLetter * 2) + 0] = titleletterTargetCoords[(currentLetter * 2) + 0];
-				}
-			}
-			else {
-				if(titleletterCoords[(currentLetter * 2) + 0] >= titleletterTargetCoords[(currentLetter * 2) + 0]) {
-					titleletterCoords[(currentLetter * 2) + 0] = titleletterTargetCoords[(currentLetter * 2) + 0];
-				}
-			}
-			if(titleletterDeltas[(currentLetter * 2) + 1] < 0) {
-				if(titleletterCoords[(currentLetter * 2) + 1] <= titleletterTargetCoords[(currentLetter * 2) + 1]) {
-					titleletterCoords[(currentLetter * 2) + 1] = titleletterTargetCoords[(currentLetter * 2) + 1];
-				}
-			}
-			else {
-				if(titleletterCoords[(currentLetter * 2) + 1] >= titleletterTargetCoords[(currentLetter * 2) + 1]) {
-					titleletterCoords[(currentLetter * 2) + 1] = titleletterTargetCoords[(currentLetter * 2) + 1];
-				}
-			}
-		}
-		titleScrollTextX -= 3;
-		if(titleScrollTextX < -4000) {
-			titleScrollTextX = 1910;
+		else {
+			doGameStuff();
 		}
 	}
 }
