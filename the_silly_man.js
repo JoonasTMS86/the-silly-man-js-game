@@ -475,7 +475,9 @@ function doTitleStuff() {
 }
 
 function doGameStuff() {
+	var playerActualX;
 	var playerMoving = false;
+	if(playerFaceDir != 0) playerActualX -= 50;
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_backgroundSprite, 0, 0);
 	if(goingup) {
 		playerMoving = true;
@@ -491,7 +493,7 @@ function doGameStuff() {
 		playerFaceDir = 1;
 		playerMoving = true;
 		playerX -= playerMovementSpeed;
-		if(playerX < -10) playerX = -10;
+		if(playerX < -54) playerX = -54;
 	}
 	if(goingright) {
 		playerFaceDir = 0;
@@ -499,12 +501,14 @@ function doGameStuff() {
 		playerX += playerMovementSpeed;
 		if(playerX > 1800) playerX = 1800;
 	}
+	playerActualX = playerX;
+	if(playerFaceDir != 0) playerActualX -= 50;
 	if(playerMoving) {
 		if(playerFaceDir == 0) {
-			gfxScaledToCurrentDeviceResolutionCtx.drawImage(animation_playerWalkingE[playerAnimFrame], playerX, playerY);
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(animation_playerWalkingE[playerAnimFrame], playerActualX, playerY);
 		}
 		else {
-			gfxScaledToCurrentDeviceResolutionCtx.drawImage(animation_playerWalkingW[playerAnimFrame], playerX, playerY);
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(animation_playerWalkingW[playerAnimFrame], playerActualX, playerY);
 		}
 		playerAnimFrame++;
 		if(playerAnimFrame >= animation_playerWalkingE.length) {
@@ -514,10 +518,10 @@ function doGameStuff() {
 	else {
 		playerAnimFrame = 0;
 		if(playerFaceDir == 0) {
-			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingeBuffer, playerX, playerY);
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingeBuffer, playerActualX, playerY);
 		}
 		else {
-			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingwBuffer, playerX, playerY);
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingwBuffer, playerActualX, playerY);
 		}
 	}
 	doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
