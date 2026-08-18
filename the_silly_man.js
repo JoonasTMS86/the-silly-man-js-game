@@ -1,6 +1,6 @@
 var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata,
 gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX,
-currentScreen, playerX, playerY, playerAnimFrame;
+currentScreen, playerX, playerY, playerAnimFrame, playerFaceDir;
 var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var keyDown                                  = false;
@@ -91,6 +91,18 @@ var gfx_walke2Buffer                         = document.getElementById("gfx_walk
 var gfx_walke2Ctx                            = gfx_walke2Buffer.getContext("2d");
 var gfx_walke2Sdata                          = gfx_walke2Ctx.createImageData(228, 345);
 var gfx_walke2Sprite                         = document.getElementById("gfx_walke2");
+var gfx_facingwBuffer                        = document.getElementById("gfx_facingwBuffer");
+var gfx_facingwCtx                           = gfx_facingwBuffer.getContext("2d");
+var gfx_facingwSdata                         = gfx_facingwCtx.createImageData(228, 345);
+var gfx_facingwSprite                        = document.getElementById("gfx_facingw");
+var gfx_walkw1Buffer                         = document.getElementById("gfx_walkw1Buffer");
+var gfx_walkw1Ctx                            = gfx_walkw1Buffer.getContext("2d");
+var gfx_walkw1Sdata                          = gfx_walkw1Ctx.createImageData(228, 345);
+var gfx_walkw1Sprite                         = document.getElementById("gfx_walkw1");
+var gfx_walkw2Buffer                         = document.getElementById("gfx_walkw2Buffer");
+var gfx_walkw2Ctx                            = gfx_walkw2Buffer.getContext("2d");
+var gfx_walkw2Sdata                          = gfx_walkw2Ctx.createImageData(228, 345);
+var gfx_walkw2Sprite                         = document.getElementById("gfx_walkw2");
 
 const snd_sillyman001                        = new Audio("sillyman001.wav");
 var titleletterCoords                        = [
@@ -132,9 +144,13 @@ const titleletterTargetCoords                = [
 	300, 500,
 	600, 500
 ];
-const anims = [
+const animation_playerWalkingE = [
 	gfx_walke1Buffer, gfx_walke1Buffer, gfx_walke1Buffer, gfx_walke1Buffer, gfx_walke1Buffer,
 	gfx_walke2Buffer, gfx_walke2Buffer, gfx_walke2Buffer, gfx_walke2Buffer, gfx_walke2Buffer
+];
+const animation_playerWalkingW = [
+	gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer,
+	gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer
 ];
 const playerMovementSpeed = 5;
 
@@ -325,6 +341,9 @@ window.onload = function() {
 	gfx_facingeCtx.drawImage(gfx_facingeSprite, 0, 0);
 	gfx_walke1Ctx.drawImage(gfx_walke1Sprite, 0, 0);
 	gfx_walke2Ctx.drawImage(gfx_walke2Sprite, 0, 0);
+	gfx_facingwCtx.drawImage(gfx_facingwSprite, 0, 0);
+	gfx_walkw1Ctx.drawImage(gfx_walkw1Sprite, 0, 0);
+	gfx_walkw2Ctx.drawImage(gfx_walkw2Sprite, 0, 0);
 
 	gfx_gametitleletter1Sdata = gfx_gametitleletter1Ctx.getImageData(0, 0, gfx_gametitleletter1Buffer.width, gfx_gametitleletter1Buffer.height);
 	gfx_gametitleletter2Sdata = gfx_gametitleletter2Ctx.getImageData(0, 0, gfx_gametitleletter2Buffer.width, gfx_gametitleletter2Buffer.height);
@@ -344,6 +363,9 @@ window.onload = function() {
 	gfx_facingeSdata = gfx_facingeCtx.getImageData(0, 0, gfx_facingeBuffer.width, gfx_facingeBuffer.height);
 	gfx_walke1Sdata = gfx_walke1Ctx.getImageData(0, 0, gfx_walke1Buffer.width, gfx_walke1Buffer.height);
 	gfx_walke2Sdata = gfx_walke2Ctx.getImageData(0, 0, gfx_walke2Buffer.width, gfx_walke2Buffer.height);
+	gfx_facingwSdata = gfx_facingwCtx.getImageData(0, 0, gfx_facingwBuffer.width, gfx_facingwBuffer.height);
+	gfx_walkw1Sdata = gfx_walkw1Ctx.getImageData(0, 0, gfx_walkw1Buffer.width, gfx_walkw1Buffer.height);
+	gfx_walkw2Sdata = gfx_walkw2Ctx.getImageData(0, 0, gfx_walkw2Buffer.width, gfx_walkw2Buffer.height);
 
 	doSpriteTransparency(gfx_gametitleletter1Ctx, gfx_gametitleletter1Buffer, gfx_gametitleletter1Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleletter2Ctx, gfx_gametitleletter2Buffer, gfx_gametitleletter2Sdata, 255, 255, 255);
@@ -363,6 +385,9 @@ window.onload = function() {
 	doSpriteTransparency(gfx_facingeCtx, gfx_facingeBuffer, gfx_facingeSdata, 255, 119, 0);
 	doSpriteTransparency(gfx_walke1Ctx, gfx_walke1Buffer, gfx_walke1Sdata, 255, 119, 0);
 	doSpriteTransparency(gfx_walke2Ctx, gfx_walke2Buffer, gfx_walke2Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_facingwCtx, gfx_facingwBuffer, gfx_facingwSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_walkw1Ctx, gfx_walkw1Buffer, gfx_walkw1Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_walkw2Ctx, gfx_walkw2Buffer, gfx_walkw2Sdata, 255, 119, 0);
 
 };
 
@@ -445,6 +470,7 @@ function doTitleStuff() {
 		playerX = 50;
 		playerY = 50;
 		playerAnimFrame = 0;
+		playerFaceDir = 0;
 	}
 }
 
@@ -462,25 +488,37 @@ function doGameStuff() {
 		if(playerY > 445) playerY = 445;
 	}
 	if(goingleft) {
+		playerFaceDir = 1;
 		playerMoving = true;
 		playerX -= playerMovementSpeed;
 		if(playerX < -10) playerX = -10;
 	}
 	if(goingright) {
+		playerFaceDir = 0;
 		playerMoving = true;
 		playerX += playerMovementSpeed;
 		if(playerX > 1800) playerX = 1800;
 	}
 	if(playerMoving) {
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(anims[playerAnimFrame], playerX, playerY);
+		if(playerFaceDir == 0) {
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(animation_playerWalkingE[playerAnimFrame], playerX, playerY);
+		}
+		else {
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(animation_playerWalkingW[playerAnimFrame], playerX, playerY);
+		}
 		playerAnimFrame++;
-		if(playerAnimFrame >= anims.length) {
+		if(playerAnimFrame >= animation_playerWalkingE.length) {
 			playerAnimFrame = 0;
 		}
 	}
 	else {
 		playerAnimFrame = 0;
-		gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingeBuffer, playerX, playerY);
+		if(playerFaceDir == 0) {
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingeBuffer, playerX, playerY);
+		}
+		else {
+			gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingwBuffer, playerX, playerY);
+		}
 	}
 	doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
 	mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
