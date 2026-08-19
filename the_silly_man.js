@@ -1,7 +1,7 @@
 var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata,
 gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX,
 currentScreen, playerX, playerY, playerAnimFrame, playerFaceDir,
-punchOrKick;
+punchOrKick, jumpDeltaPos;
 var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var keyDown                                  = false;
@@ -10,8 +10,9 @@ var goingdown                                = false;
 var goingleft                                = false;
 var goingright                               = false;
 var spacePressed                             = false;
-var zPressed                                 = false;
+var cPressed                                 = false;
 var xPressed                                 = false;
+var zPressed                                 = false;
 var mustReleaseKey                           = false;
 var mainGfxBuffer                            = document.getElementById("mainGfxBuffer");
 var mainGfxBufferCtx                         = mainGfxBuffer.getContext("2d");
@@ -136,6 +137,7 @@ const snd_sillyman002                        = new Audio("sillyman002.wav");
 const snd_sillyman003                        = new Audio("sillyman003.wav");
 const snd_sillyman004                        = new Audio("sillyman004.wav");
 const snd_sillyman005                        = new Audio("sillyman005.wav");
+const snd_sillyman006                        = new Audio("sillyman006.wav");
 var titleletterCoords                        = [
 	0, 0,
 	0, 0,
@@ -183,6 +185,12 @@ const animation_playerWalkingW = [
 	gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer,
 	gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer
 ];
+const jumpDeltasX = [
+	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6
+];
+const jumpDeltasY = [
+	-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+];
 const playerMovementSpeed = 5;
 
 let Application = PIXI.Application,
@@ -212,8 +220,18 @@ function setup()
 	right = keyboard(39),
 	down = keyboard(40),
 	spacebar = keyboard(32),
+	keyC = keyboard(67),
 	keyX = keyboard(88),
 	keyZ = keyboard(90);
+	// Key "C".
+	keyC.press = () =>
+	{
+		cPressed = true;
+	};
+	keyC.release = () =>
+	{
+		cPressed = false;
+	};
 	// Key "X".
 	keyX.press = () =>
 	{
@@ -334,6 +352,10 @@ function resetTitleScreen() {
 }
 
 window.onload = function() {
+
+	console.log("jumpDeltasX length = " + jumpDeltasX.length);
+	console.log("jumpDeltasY length = " + jumpDeltasY.length);
+
 	// Detect the resolution of the user's device in order to scale images correctly.
 	screen_width  = window.screen.availWidth;
 	screen_height = window.screen.availHeight;
@@ -550,43 +572,54 @@ function doGameStuff() {
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_backgroundSprite, 0, 0);
 	if(!mustReleaseKey) {
 		if(zPressed) {
+			jumpDeltaPos = 0;
 			punchOrKick = 1;
+			mustReleaseKey = true;
+			snd_sillyman006.load();
+			snd_sillyman006.play();
+		}
+		if(xPressed) {
+			punchOrKick = 2;
 			mustReleaseKey = true;
 			snd_sillyman002.load();
 			snd_sillyman002.play();
 		}
-		if(xPressed) {
-			punchOrKick = 2;
+		if(cPressed) {
+			punchOrKick = 3;
 			mustReleaseKey = true;
 			snd_sillyman003.load();
 			snd_sillyman003.play();
 		}
 	}
-	if(!zPressed && !xPressed) {
-		punchOrKick = 0;
-		mustReleaseKey = false;
+	if(!cPressed && !xPressed && !zPressed) {
+		if(punchOrKick != 1) {
+			punchOrKick = 0;
+			mustReleaseKey = false;
+		}
 	}
-	if(goingup) {
-		playerMoving = true;
-		playerY -= playerMovementSpeed;
-		if(playerY < -5) playerY = -5;
-	}
-	if(goingdown) {
-		playerMoving = true;
-		playerY += playerMovementSpeed;
-		if(playerY > 445) playerY = 445;
-	}
-	if(goingleft) {
-		playerFaceDir = 1;
-		playerMoving = true;
-		playerX -= playerMovementSpeed;
-		if(playerX < -54) playerX = -54;
-	}
-	if(goingright) {
-		playerFaceDir = 0;
-		playerMoving = true;
-		playerX += playerMovementSpeed;
-		if(playerX > 1800) playerX = 1800;
+	if(!mustReleaseKey) {
+		if(goingup) {
+			playerMoving = true;
+			playerY -= playerMovementSpeed;
+			if(playerY < -5) playerY = -5;
+		}
+		if(goingdown) {
+			playerMoving = true;
+			playerY += playerMovementSpeed;
+			if(playerY > 445) playerY = 445;
+		}
+		if(goingleft) {
+			playerFaceDir = 1;
+			playerMoving = true;
+			playerX -= playerMovementSpeed;
+			if(playerX < -54) playerX = -54;
+		}
+		if(goingright) {
+			playerFaceDir = 0;
+			playerMoving = true;
+			playerX += playerMovementSpeed;
+			if(playerX > 1800) playerX = 1800;
+		}
 	}
 	playerActualX = playerX;
 	if(playerFaceDir != 0) playerActualX -= 50;
@@ -610,9 +643,18 @@ function doGameStuff() {
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingeBuffer, playerActualX, playerY);
 					break;
 				case 1:
-					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_kickeBuffer, playerActualX, playerY);
+					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_flyingkickeBuffer, playerActualX, playerY);
+					playerX += jumpDeltasX[jumpDeltaPos];
+					playerY += jumpDeltasY[jumpDeltaPos];
+					jumpDeltaPos++;
+					if(jumpDeltaPos >= jumpDeltasX.length) {
+						punchOrKick = 0;
+					}
 					break;
 				case 2:
+					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_kickeBuffer, playerActualX, playerY);
+					break;
+				case 3:
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_puncheBuffer, playerActualX, playerY);
 					break;
 			}
@@ -623,9 +665,18 @@ function doGameStuff() {
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_facingwBuffer, playerActualX, playerY);
 					break;
 				case 1:
-					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_kickwBuffer, playerActualX, playerY);
+					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_flyingkickwBuffer, playerActualX, playerY);
+					playerX -= jumpDeltasX[jumpDeltaPos];
+					playerY += jumpDeltasY[jumpDeltaPos];
+					jumpDeltaPos++;
+					if(jumpDeltaPos >= jumpDeltasX.length) {
+						punchOrKick = 0;
+					}
 					break;
 				case 2:
+					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_kickwBuffer, playerActualX, playerY);
+					break;
+				case 3:
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_punchwBuffer, playerActualX, playerY);
 					break;
 			}
