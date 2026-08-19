@@ -347,8 +347,8 @@ function resetTitleScreen() {
 	titleletterCoords[21] = 0;
 	gametitleClownSpriteFrame = 0;
 	gametitleClownSpriteTimer = 0;
-	snd_sillyman001.play();
 	titleScrollTextX = 1910;
+	snd_sillyman001.play();
 }
 
 window.onload = function() {
@@ -520,7 +520,7 @@ function doTitleStuff() {
 
 	gfxScaledToCurrentDeviceResolutionCtx.font = "bold 70px Arial";
 	gfxScaledToCurrentDeviceResolutionCtx.fillStyle = "#008888";
-	gfxScaledToCurrentDeviceResolutionCtx.fillText("2026 Joonas Lindberg. Code, graphics & sound: Joonas Lindberg. Press Space to start the game.", titleScrollTextX, 454);
+	gfxScaledToCurrentDeviceResolutionCtx.fillText("2026 Joonas Lindberg. Code, graphics & sound: Joonas Lindberg. Press Space to start the game. Controls: Arrow Keys - Move   Z - Flying Kick   X - Kick   C - Punch", titleScrollTextX, 454);
 
 	doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
 	mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
@@ -552,11 +552,12 @@ function doTitleStuff() {
 			}
 		}
 	}
-	titleScrollTextX -= 3;
-	if(titleScrollTextX < -4000) {
+	titleScrollTextX -= 5;
+	if(titleScrollTextX < -5600) {
 		titleScrollTextX = 1910;
 	}
 	if(spacePressed) {
+		snd_sillyman001.pause();
 		currentScreen = 1;
 		playerX = 50;
 		playerY = 50;
