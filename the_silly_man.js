@@ -134,6 +134,8 @@ var gfx_flyingkickwSprite                    = document.getElementById("gfx_flyi
 const snd_sillyman001                        = new Audio("sillyman001.wav");
 const snd_sillyman002                        = new Audio("sillyman002.wav");
 const snd_sillyman003                        = new Audio("sillyman003.wav");
+const snd_sillyman004                        = new Audio("sillyman004.wav");
+const snd_sillyman005                        = new Audio("sillyman005.wav");
 var titleletterCoords                        = [
 	0, 0,
 	0, 0,
