@@ -131,13 +131,6 @@ var gfx_flyingkickwBuffer                    = document.getElementById("gfx_flyi
 var gfx_flyingkickwCtx                       = gfx_flyingkickwBuffer.getContext("2d");
 var gfx_flyingkickwSdata                     = gfx_flyingkickwCtx.createImageData(228, 345);
 var gfx_flyingkickwSprite                    = document.getElementById("gfx_flyingkickw");
-
-const snd_sillyman001                        = new Audio("sillyman001.wav");
-const snd_sillyman002                        = new Audio("sillyman002.wav");
-const snd_sillyman003                        = new Audio("sillyman003.wav");
-const snd_sillyman004                        = new Audio("sillyman004.wav");
-const snd_sillyman005                        = new Audio("sillyman005.wav");
-const snd_sillyman006                        = new Audio("sillyman006.wav");
 var titleletterCoords                        = [
 	0, 0,
 	0, 0,
@@ -151,7 +144,14 @@ var titleletterCoords                        = [
 	0, 0,
 	0, 0
 ];
-const titleletterDeltas                      = [
+
+const snd_sillyman001          = new Audio("sillyman001.wav");
+const snd_sillyman002          = new Audio("sillyman002.wav");
+const snd_sillyman003          = new Audio("sillyman003.wav");
+const snd_sillyman004          = new Audio("sillyman004.wav");
+const snd_sillyman005          = new Audio("sillyman005.wav");
+const snd_sillyman006          = new Audio("sillyman006.wav");
+const titleletterDeltas        = [
 	-5, -5,
 	5, 0,
 	-5, 0,
@@ -164,7 +164,7 @@ const titleletterDeltas                      = [
 	-11, 5,
 	-8, 8
 ];
-const titleletterTargetCoords                = [
+const titleletterTargetCoords  = [
 	0, 0,
 	250, 0,
 	500, 0,
@@ -185,13 +185,15 @@ const animation_playerWalkingW = [
 	gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer, gfx_walkw1Buffer,
 	gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer, gfx_walkw2Buffer
 ];
-const jumpDeltasX = [
+const jumpDeltasX              = [
 	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6
 ];
-const jumpDeltasY = [
+const jumpDeltasY              = [
 	-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 ];
-const playerMovementSpeed = 5;
+const screenLeftBoundary       = -54;
+const screenRightBoundary      = 1800;
+const playerMovementSpeed      = 5;
 
 let Application = PIXI.Application,
 	Container = PIXI.Container,
@@ -613,13 +615,13 @@ function doGameStuff() {
 			playerFaceDir = 1;
 			playerMoving = true;
 			playerX -= playerMovementSpeed;
-			if(playerX < -54) playerX = -54;
+			if(playerX < screenLeftBoundary) playerX = screenLeftBoundary;
 		}
 		if(goingright) {
 			playerFaceDir = 0;
 			playerMoving = true;
 			playerX += playerMovementSpeed;
-			if(playerX > 1800) playerX = 1800;
+			if(playerX > screenRightBoundary) playerX = screenRightBoundary;
 		}
 	}
 	playerActualX = playerX;
@@ -646,6 +648,7 @@ function doGameStuff() {
 				case 1:
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_flyingkickeBuffer, playerActualX, playerY);
 					playerX += jumpDeltasX[jumpDeltaPos];
+					if(playerX > screenRightBoundary) playerX = screenRightBoundary;
 					playerY += jumpDeltasY[jumpDeltaPos];
 					jumpDeltaPos++;
 					if(jumpDeltaPos >= jumpDeltasX.length) {
@@ -668,6 +671,7 @@ function doGameStuff() {
 				case 1:
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_flyingkickwBuffer, playerActualX, playerY);
 					playerX -= jumpDeltasX[jumpDeltaPos];
+					if(playerX < screenLeftBoundary) playerX = screenLeftBoundary;
 					playerY += jumpDeltasY[jumpDeltaPos];
 					jumpDeltaPos++;
 					if(jumpDeltaPos >= jumpDeltasX.length) {
