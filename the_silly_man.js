@@ -11,9 +11,14 @@ var goingleft                                = false;
 var goingright                               = false;
 var spacePressed                             = false;
 var cPressed                                 = false;
+var dPressed                                 = false;
 var xPressed                                 = false;
 var zPressed                                 = false;
-var mustReleaseKey                           = false;
+var mustReleaseAnyKey                        = false;
+var mustReleaseKeyC                          = false;
+var mustReleaseKeyD                          = false;
+var mustReleaseKeyX                          = false;
+var mustReleaseKeyZ                          = false;
 var mainGfxBuffer                            = document.getElementById("mainGfxBuffer");
 var mainGfxBufferCtx                         = mainGfxBuffer.getContext("2d");
 var doubleGfxBuffer                          = document.getElementById("doubleGfxBuffer");
@@ -223,6 +228,7 @@ function setup()
 	down = keyboard(40),
 	spacebar = keyboard(32),
 	keyC = keyboard(67),
+	keyD = keyboard(68),
 	keyX = keyboard(88),
 	keyZ = keyboard(90);
 	// Key "C".
@@ -233,6 +239,15 @@ function setup()
 	keyC.release = () =>
 	{
 		cPressed = false;
+	};
+	// Key "D".
+	keyD.press = () =>
+	{
+		dPressed = true;
+	};
+	keyD.release = () =>
+	{
+		dPressed = false;
 	};
 	// Key "X".
 	keyX.press = () =>
@@ -565,6 +580,7 @@ function doTitleStuff() {
 		playerY = 50;
 		playerAnimFrame = 0;
 		playerFaceDir = 0;
+		punchOrKick = 0;
 	}
 }
 
@@ -573,34 +589,32 @@ function doGameStuff() {
 	var playerMoving = false;
 	if(playerFaceDir != 0) playerActualX -= 50;
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_backgroundSprite, 0, 0);
-	if(!mustReleaseKey) {
-		if(zPressed) {
-			jumpDeltaPos = 0;
-			punchOrKick = 1;
-			mustReleaseKey = true;
-			snd_sillyman006.load();
-			snd_sillyman006.play();
-		}
-		if(xPressed) {
-			punchOrKick = 2;
-			mustReleaseKey = true;
-			snd_sillyman002.load();
-			snd_sillyman002.play();
-		}
-		if(cPressed) {
-			punchOrKick = 3;
-			mustReleaseKey = true;
-			snd_sillyman003.load();
-			snd_sillyman003.play();
-		}
+	if(zPressed && punchOrKick != 1) {
+		jumpDeltaPos = 0;
+		punchOrKick = 1;
+		snd_sillyman006.load();
+		snd_sillyman006.play();
 	}
-	if(!cPressed && !xPressed && !zPressed) {
+	if(punchOrKick != 1 && xPressed && !mustReleaseKeyX) {
+		mustReleaseKeyX = true;
+		punchOrKick = 2;
+		snd_sillyman002.load();
+		snd_sillyman002.play();
+	}
+	if(punchOrKick != 1 && cPressed && !mustReleaseKeyC) {
+		mustReleaseKeyC = true;
+		punchOrKick = 3;
+		snd_sillyman003.load();
+		snd_sillyman003.play();
+	}
+	if(!cPressed && !xPressed) {
+		mustReleaseKeyX = false;
+		mustReleaseKeyC = false;
 		if(punchOrKick != 1) {
 			punchOrKick = 0;
-			mustReleaseKey = false;
 		}
 	}
-	if(!mustReleaseKey) {
+	if(punchOrKick == 0) {
 		if(goingup) {
 			playerMoving = true;
 			playerY -= playerMovementSpeed;
