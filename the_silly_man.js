@@ -1,7 +1,7 @@
 var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata,
 gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX,
 currentScreen, playerX, playerY, playerAnimFrame, playerFaceDir,
-playerState, jumpDeltaPos;
+playerState, jumpDeltaPos, energy;
 var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var keyDown                                  = false;
@@ -144,6 +144,10 @@ var gfx_knockedbackeBuffer                   = document.getElementById("gfx_knoc
 var gfx_knockedbackeCtx                      = gfx_knockedbackeBuffer.getContext("2d");
 var gfx_knockedbackeSdata                    = gfx_knockedbackeCtx.createImageData(228, 345);
 var gfx_knockedbackeSprite                   = document.getElementById("gfx_knockedbacke");
+var gfx_deadBuffer                           = document.getElementById("gfx_deadBuffer");
+var gfx_deadCtx                              = gfx_deadBuffer.getContext("2d");
+var gfx_deadSdata                            = gfx_deadCtx.createImageData(255, 345);
+var gfx_deadSprite                           = document.getElementById("gfx_dead");
 var titleletterCoords                        = [
 	0, 0,
 	0, 0,
@@ -450,6 +454,7 @@ window.onload = function() {
 	gfx_flyingkickwCtx.drawImage(gfx_flyingkickwSprite, 0, 0);
 	gfx_knockedbackwCtx.drawImage(gfx_knockedbackwSprite, 0, 0);
 	gfx_knockedbackeCtx.drawImage(gfx_knockedbackeSprite, 0, 0);
+	gfx_deadCtx.drawImage(gfx_deadSprite, 0, 0);
 
 	gfx_gametitleletter1Sdata = gfx_gametitleletter1Ctx.getImageData(0, 0, gfx_gametitleletter1Buffer.width, gfx_gametitleletter1Buffer.height);
 	gfx_gametitleletter2Sdata = gfx_gametitleletter2Ctx.getImageData(0, 0, gfx_gametitleletter2Buffer.width, gfx_gametitleletter2Buffer.height);
@@ -480,6 +485,7 @@ window.onload = function() {
 	gfx_flyingkickwSdata = gfx_flyingkickwCtx.getImageData(0, 0, gfx_flyingkickwBuffer.width, gfx_flyingkickwBuffer.height);
 	gfx_knockedbackwSdata = gfx_knockedbackwCtx.getImageData(0, 0, gfx_knockedbackwBuffer.width, gfx_knockedbackwBuffer.height);
 	gfx_knockedbackeSdata = gfx_knockedbackeCtx.getImageData(0, 0, gfx_knockedbackeBuffer.width, gfx_knockedbackeBuffer.height);
+	gfx_deadSdata = gfx_deadCtx.getImageData(0, 0, gfx_deadBuffer.width, gfx_deadBuffer.height);
 
 	doSpriteTransparency(gfx_gametitleletter1Ctx, gfx_gametitleletter1Buffer, gfx_gametitleletter1Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleletter2Ctx, gfx_gametitleletter2Buffer, gfx_gametitleletter2Sdata, 255, 255, 255);
@@ -510,6 +516,7 @@ window.onload = function() {
 	doSpriteTransparency(gfx_flyingkickwCtx, gfx_flyingkickwBuffer, gfx_flyingkickwSdata, 255, 119, 0);
 	doSpriteTransparency(gfx_knockedbackwCtx, gfx_knockedbackwBuffer, gfx_knockedbackwSdata, 255, 119, 0);
 	doSpriteTransparency(gfx_knockedbackeCtx, gfx_knockedbackeBuffer, gfx_knockedbackeSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_deadCtx, gfx_deadBuffer, gfx_deadSdata, 255, 119, 0);
 
 };
 
@@ -595,6 +602,7 @@ function doTitleStuff() {
 		playerAnimFrame = 0;
 		playerFaceDir = 0;
 		playerState = 0;
+		energy = 2;
 	}
 }
 
@@ -605,6 +613,7 @@ playerState states:
 2 = KICKING
 3 = PUNCHING
 4 = PLAYER HIT
+5 = PLAYER DEAD
 */
 function doGameStuff() {
 	var playerActualX;
@@ -612,11 +621,20 @@ function doGameStuff() {
 	if(playerFaceDir != 0) playerActualX -= 50;
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_backgroundSprite, 0, 0);
 	if(playerState == 0 && dPressed && !mustReleaseKeyD) {
+		// DEBUG KEY: Player got hit.
 		mustReleaseKeyD = true;
 		playerState = 4;
 		jumpDeltaPos = 0;
-		snd_sillyman005.load();
-		snd_sillyman005.play();
+		energy--;
+		if(energy <= 0) {
+			playerState = 5;
+			snd_sillyman004.load();
+			snd_sillyman004.play();
+		}
+		else {
+			snd_sillyman005.load();
+			snd_sillyman005.play();
+		}
 	}
 	if(zPressed && playerState == 0) {
 		jumpDeltaPos = 0;
@@ -624,13 +642,13 @@ function doGameStuff() {
 		snd_sillyman006.load();
 		snd_sillyman006.play();
 	}
-	if(playerState != 1 && playerState != 4 && xPressed && !mustReleaseKeyX) {
+	if(playerState != 1 && playerState != 4 && playerState != 5 && xPressed && !mustReleaseKeyX) {
 		mustReleaseKeyX = true;
 		playerState = 2;
 		snd_sillyman002.load();
 		snd_sillyman002.play();
 	}
-	if(playerState != 1 && playerState != 4 && cPressed && !mustReleaseKeyC) {
+	if(playerState != 1 && playerState != 4 && playerState != 5 && cPressed && !mustReleaseKeyC) {
 		mustReleaseKeyC = true;
 		playerState = 3;
 		snd_sillyman003.load();
@@ -640,7 +658,7 @@ function doGameStuff() {
 		mustReleaseKeyX = false;
 		mustReleaseKeyC = false;
 		mustReleaseKeyD = false;
-		if(playerState != 1 && playerState != 4) {
+		if(playerState != 1 && playerState != 4 && playerState != 5) {
 			playerState = 0;
 		}
 	}
@@ -714,6 +732,9 @@ function doGameStuff() {
 						playerState = 0;
 					}
 					break;
+				case 5:
+					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_deadBuffer, playerActualX, playerY);
+					break;
 			}
 		}
 		else {
@@ -745,6 +766,9 @@ function doGameStuff() {
 					if(jumpDeltaPos >= 20) {
 						playerState = 0;
 					}
+					break;
+				case 5:
+					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_deadBuffer, playerActualX, playerY);
 					break;
 			}
 		}
