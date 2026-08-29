@@ -1,4 +1,4 @@
-var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata,
+var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata, gfx_energyBarSdata,
 gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX,
 currentScreen, playerX, playerY, playerAnimFrame, playerFaceDir,
 playerState, jumpDeltaPos, energy;
@@ -148,6 +148,20 @@ var gfx_deadBuffer                           = document.getElementById("gfx_dead
 var gfx_deadCtx                              = gfx_deadBuffer.getContext("2d");
 var gfx_deadSdata                            = gfx_deadCtx.createImageData(255, 345);
 var gfx_deadSprite                           = document.getElementById("gfx_dead");
+var gfx_energybar1Buffer                     = document.getElementById("gfx_energybar1Buffer");
+var gfx_energybar1Ctx                        = gfx_energybar1Buffer.getContext("2d");
+var gfx_energybar1Sdata                      = gfx_energybar1Ctx.createImageData(73, 69);
+var gfx_energybar1Sprite                     = document.getElementById("gfx_energybar1");
+var gfx_energybar2Buffer                     = document.getElementById("gfx_energybar2Buffer");
+var gfx_energybar2Ctx                        = gfx_energybar2Buffer.getContext("2d");
+var gfx_energybar2Sdata                      = gfx_energybar2Ctx.createImageData(73, 69);
+var gfx_energybar2Sprite                     = document.getElementById("gfx_energybar2");
+var gfx_energybar3Buffer                     = document.getElementById("gfx_energybar3Buffer");
+var gfx_energybar3Ctx                        = gfx_energybar3Buffer.getContext("2d");
+var gfx_energybar3Sdata                      = gfx_energybar3Ctx.createImageData(73, 69);
+var gfx_energybar3Sprite                     = document.getElementById("gfx_energybar3");
+var gfx_energyBarBuffer                      = document.getElementById("gfx_energyBarBuffer");
+var gfx_energyBarCtx                         = gfx_energyBarBuffer.getContext("2d");
 var titleletterCoords                        = [
 	0, 0,
 	0, 0,
@@ -211,6 +225,8 @@ const jumpDeltasY              = [
 const screenLeftBoundary       = -54;
 const screenRightBoundary      = 1800;
 const playerMovementSpeed      = 5;
+const coordXOfEnergyBar        = 400;
+const coordYOfEnergyBar        = 820;
 
 let Application = PIXI.Application,
 	Container = PIXI.Container,
@@ -414,6 +430,18 @@ window.onload = function() {
 	doubleGfxBufferCtx.putImageData(doubleGfxBufferSdata, 0, 0);
 	doubleGfxBufferSdata = doubleGfxBufferCtx.getImageData(0, 0, doubleGfxBuffer.width, doubleGfxBuffer.height);
 
+	gfx_energyBarSdata = gfx_energyBarCtx.createImageData(365, 69);
+	gfx_energyBarCtx.putImageData(gfx_energyBarSdata, 0, 0);
+	gfx_energyBarSdata = gfx_energyBarCtx.getImageData(0, 0, gfx_energyBarBuffer.width, gfx_energyBarBuffer.height);
+
+	for(var pos = 0; pos < 100740; pos += 4) {
+		gfx_energyBarSdata.data[pos + 0] = 0;
+		gfx_energyBarSdata.data[pos + 1] = 0;
+		gfx_energyBarSdata.data[pos + 2] = 0;
+		gfx_energyBarSdata.data[pos + 3] = 0;
+	}
+	gfx_energyBarCtx.putImageData(gfx_energyBarSdata, 0, 0);
+
 	resetTitleScreen();
 
 	mainGfxBufferSdata = mainGfxBufferCtx.createImageData(fullSizeWidth, fullSizeHeight);
@@ -455,6 +483,9 @@ window.onload = function() {
 	gfx_knockedbackwCtx.drawImage(gfx_knockedbackwSprite, 0, 0);
 	gfx_knockedbackeCtx.drawImage(gfx_knockedbackeSprite, 0, 0);
 	gfx_deadCtx.drawImage(gfx_deadSprite, 0, 0);
+	gfx_energybar1Ctx.drawImage(gfx_energybar1Sprite, 0, 0);
+	gfx_energybar2Ctx.drawImage(gfx_energybar2Sprite, 0, 0);
+	gfx_energybar3Ctx.drawImage(gfx_energybar3Sprite, 0, 0);
 
 	gfx_gametitleletter1Sdata = gfx_gametitleletter1Ctx.getImageData(0, 0, gfx_gametitleletter1Buffer.width, gfx_gametitleletter1Buffer.height);
 	gfx_gametitleletter2Sdata = gfx_gametitleletter2Ctx.getImageData(0, 0, gfx_gametitleletter2Buffer.width, gfx_gametitleletter2Buffer.height);
@@ -486,6 +517,9 @@ window.onload = function() {
 	gfx_knockedbackwSdata = gfx_knockedbackwCtx.getImageData(0, 0, gfx_knockedbackwBuffer.width, gfx_knockedbackwBuffer.height);
 	gfx_knockedbackeSdata = gfx_knockedbackeCtx.getImageData(0, 0, gfx_knockedbackeBuffer.width, gfx_knockedbackeBuffer.height);
 	gfx_deadSdata = gfx_deadCtx.getImageData(0, 0, gfx_deadBuffer.width, gfx_deadBuffer.height);
+	gfx_energybar1Sdata = gfx_energybar1Ctx.getImageData(0, 0, gfx_energybar1Buffer.width, gfx_energybar1Buffer.height);
+	gfx_energybar2Sdata = gfx_energybar2Ctx.getImageData(0, 0, gfx_energybar2Buffer.width, gfx_energybar2Buffer.height);
+	gfx_energybar3Sdata = gfx_energybar3Ctx.getImageData(0, 0, gfx_energybar3Buffer.width, gfx_energybar3Buffer.height);
 
 	doSpriteTransparency(gfx_gametitleletter1Ctx, gfx_gametitleletter1Buffer, gfx_gametitleletter1Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleletter2Ctx, gfx_gametitleletter2Buffer, gfx_gametitleletter2Sdata, 255, 255, 255);
@@ -517,8 +551,57 @@ window.onload = function() {
 	doSpriteTransparency(gfx_knockedbackwCtx, gfx_knockedbackwBuffer, gfx_knockedbackwSdata, 255, 119, 0);
 	doSpriteTransparency(gfx_knockedbackeCtx, gfx_knockedbackeBuffer, gfx_knockedbackeSdata, 255, 119, 0);
 	doSpriteTransparency(gfx_deadCtx, gfx_deadBuffer, gfx_deadSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_energybar1Ctx, gfx_energybar1Buffer, gfx_energybar1Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_energybar2Ctx, gfx_energybar2Buffer, gfx_energybar2Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_energybar3Ctx, gfx_energybar3Buffer, gfx_energybar3Sdata, 255, 119, 0);
 
 };
+
+function updateEnergyBar() {
+	//gfx_energyBarCtx.drawImage(gfx_energybar1Buffer, 0, 0);
+	var energyBar1 = gfx_energybar1Buffer;
+	var energyBar2 = gfx_energybar1Buffer;
+	var energyBar3 = gfx_energybar1Buffer;
+	var energyBar4 = gfx_energybar1Buffer;
+	var energyBar5 = gfx_energybar1Buffer;
+	if(energy >= 2) {
+		energyBar1 = gfx_energybar3Buffer;
+	}
+	if(energy >= 4) {
+		energyBar2 = gfx_energybar3Buffer;
+	}
+	if(energy >= 6) {
+		energyBar3 = gfx_energybar3Buffer;
+	}
+	if(energy >= 8) {
+		energyBar4 = gfx_energybar3Buffer;
+	}
+	if(energy >= 10) {
+		energyBar5 = gfx_energybar3Buffer;
+	}
+	switch(energy) {
+		case 1:
+			energyBar1 = gfx_energybar2Buffer;
+			break;
+		case 3:
+			energyBar2 = gfx_energybar2Buffer;
+			break;
+		case 5:
+			energyBar3 = gfx_energybar2Buffer;
+			break;
+		case 7:
+			energyBar4 = gfx_energybar2Buffer;
+			break;
+		case 9:
+			energyBar5 = gfx_energybar2Buffer;
+			break;
+	}
+	gfx_energyBarCtx.drawImage(energyBar1, 73 * 0, 0);
+	gfx_energyBarCtx.drawImage(energyBar2, 73 * 1, 0);
+	gfx_energyBarCtx.drawImage(energyBar3, 73 * 2, 0);
+	gfx_energyBarCtx.drawImage(energyBar4, 73 * 3, 0);
+	gfx_energyBarCtx.drawImage(energyBar5, 73 * 4, 0);
+}
 
 function doTitleStuff() {
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_gametitlebgSprite, 0, 0);
@@ -602,7 +685,8 @@ function doTitleStuff() {
 		playerAnimFrame = 0;
 		playerFaceDir = 0;
 		playerState = 0;
-		energy = 2;
+		energy = 10;
+		updateEnergyBar();
 	}
 }
 
@@ -626,6 +710,7 @@ function doGameStuff() {
 		playerState = 4;
 		jumpDeltaPos = 0;
 		energy--;
+		updateEnergyBar();
 		if(energy <= 0) {
 			playerState = 5;
 			snd_sillyman004.load();
@@ -773,6 +858,7 @@ function doGameStuff() {
 			}
 		}
 	}
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_energyBarBuffer, coordXOfEnergyBar, coordYOfEnergyBar);
 	doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
 	mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
 }
