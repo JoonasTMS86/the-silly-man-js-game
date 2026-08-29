@@ -1,7 +1,7 @@
 var deviceWidth, deviceHeight, mainGfxBufferSdata, doubleGfxBufferSdata, gfx_energyBarSdata,
 gametitleClownSpriteFrame, gametitleClownSpriteTimer, titleScrollTextX,
 currentScreen, playerX, playerY, playerAnimFrame, playerFaceDir,
-playerState, jumpDeltaPos, energy;
+playerState, jumpDeltaPos, score, energy, lives, deadTimer;
 var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var keyDown                                  = false;
@@ -227,6 +227,10 @@ const screenRightBoundary      = 1800;
 const playerMovementSpeed      = 5;
 const coordXOfEnergyBar        = 400;
 const coordYOfEnergyBar        = 820;
+const coordXOfLives            = 180;
+const coordYOfLives            = 880;
+const coordXOfScore            = 880;
+const coordYOfScore            = 880;
 
 let Application = PIXI.Application,
 	Container = PIXI.Container,
@@ -393,6 +397,7 @@ function resetTitleScreen() {
 	gametitleClownSpriteFrame = 0;
 	gametitleClownSpriteTimer = 0;
 	titleScrollTextX = 1910;
+	snd_sillyman001.load();
 	snd_sillyman001.play();
 }
 
@@ -686,6 +691,8 @@ function doTitleStuff() {
 		playerFaceDir = 0;
 		playerState = 0;
 		energy = 10;
+		lives = 3;
+		score = 0;
 		updateEnergyBar();
 	}
 }
@@ -712,6 +719,7 @@ function doGameStuff() {
 		energy--;
 		updateEnergyBar();
 		if(energy <= 0) {
+			deadTimer = 200;
 			playerState = 5;
 			snd_sillyman004.load();
 			snd_sillyman004.play();
@@ -787,6 +795,18 @@ function doGameStuff() {
 	}
 	else {
 		playerAnimFrame = 0;
+		if(playerState == 5) {
+			deadTimer--;
+			if(deadTimer <= 0) {
+				playerState = 0;
+				energy = 10;
+				updateEnergyBar();
+				lives--;
+				if(lives < 0) {
+					resetTitleScreen();
+				}
+			}
+		}
 		if(playerFaceDir == 0) {
 			switch(playerState) {
 				case 0:
@@ -859,6 +879,30 @@ function doGameStuff() {
 		}
 	}
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_energyBarBuffer, coordXOfEnergyBar, coordYOfEnergyBar);
+	gfxScaledToCurrentDeviceResolutionCtx.font = "70px Arial";
+	gfxScaledToCurrentDeviceResolutionCtx.fillStyle = "black";
+	gfxScaledToCurrentDeviceResolutionCtx.fillText(lives, coordXOfLives, coordYOfLives);
+	if(score < 10) {
+		gfxScaledToCurrentDeviceResolutionCtx.fillText("000000" + score, coordXOfScore, coordYOfScore);
+	}
+	else if(score < 100) {
+		gfxScaledToCurrentDeviceResolutionCtx.fillText("00000" + score, coordXOfScore, coordYOfScore);
+	}
+	else if(score < 1000) {
+		gfxScaledToCurrentDeviceResolutionCtx.fillText("0000" + score, coordXOfScore, coordYOfScore);
+	}
+	else if(score < 10000) {
+		gfxScaledToCurrentDeviceResolutionCtx.fillText("000" + score, coordXOfScore, coordYOfScore);
+	}
+	else if(score < 100000) {
+		gfxScaledToCurrentDeviceResolutionCtx.fillText("00" + score, coordXOfScore, coordYOfScore);
+	}
+	else if(score < 1000000) {
+		gfxScaledToCurrentDeviceResolutionCtx.fillText("0" + score, coordXOfScore, coordYOfScore);
+	}
+	else {
+		gfxScaledToCurrentDeviceResolutionCtx.fillText(score, coordXOfScore, coordYOfScore);
+	}
 	doubleGfxBufferCtx.drawImage(gfxScaledToCurrentDeviceResolutionBuffer, 0, 0, deviceWidth, deviceHeight);
 	mainGfxBufferCtx.drawImage(doubleGfxBuffer, 0, 0);
 }
