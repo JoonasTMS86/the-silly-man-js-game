@@ -5,10 +5,10 @@ playerState, jumpDeltaPos, score, energy, lives, deadTimer;
 var fullSizeWidth                            = 1910; // Width of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var fullSizeHeight                           = 909; // Height of screen when the game is played on a screen with 1920 x 1080 resolution capability.
 var keyDown                                  = false;
-var goingup                                  = false;
-var goingdown                                = false;
-var goingleft                                = false;
-var goingright                               = false;
+var upArrowPressed                           = false;
+var downArrowPressed                         = false;
+var leftArrowPressed                         = false;
+var rightArrowPressed                        = false;
 var spacePressed                             = false;
 var cPressed                                 = false;
 var dPressed                                 = false;
@@ -162,6 +162,17 @@ var gfx_energybar3Sdata                      = gfx_energybar3Ctx.createImageData
 var gfx_energybar3Sprite                     = document.getElementById("gfx_energybar3");
 var gfx_energyBarBuffer                      = document.getElementById("gfx_energyBarBuffer");
 var gfx_energyBarCtx                         = gfx_energyBarBuffer.getContext("2d");
+var gamepadXPressed                          = false;                          // PS4 Gamepad
+var gamepadOPressed                          = false;                          // PS4 Gamepad
+var gamepadSquarePressed                     = false;                          // PS4 Gamepad
+var gamepadTrianglePressed                   = false;                          // PS4 Gamepad
+var gamepadLeftStickPushedUp                 = false;                          // PS4 Gamepad
+var gamepadLeftStickPushedDown               = false;                          // PS4 Gamepad
+var gamepadLeftStickPushedLeft               = false;                          // PS4 Gamepad
+var gamepadLeftStickPushedRight              = false;                          // PS4 Gamepad
+var gamepadpresent                           = false;                          // PS4 Gamepad
+var haveEvents                               = 'ongamepadconnected' in window; // PS4 Gamepad
+var controllers                              = {};                             // PS4 Gamepad
 var titleletterCoords                        = [
 	0, 0,
 	0, 0,
@@ -251,6 +262,31 @@ let app = new Application(
 loader
 	.load(setup);
 
+// PS4 Gamepad
+function connecthandler(e) {
+	gamepadpresent = true;
+	addgamepad(e.gamepad);
+}
+
+// PS4 Gamepad
+function addgamepad(gamepad) {
+	controllers[gamepad.index] = gamepad;
+	requestAnimationFrame(updateStatus);
+}
+
+// PS4 Gamepad
+function disconnecthandler(e) {
+	gamepadpresent = false;
+	removegamepad(e.gamepad);
+}
+
+// PS4 Gamepad
+function removegamepad(gamepad) {
+	var d = document.getElementById("controller" + gamepad.index);
+	document.body.removeChild(d);
+	delete controllers[gamepad.index];
+}
+
 function setup() 
 {
 	// Capture the keyboard arrow keys.
@@ -311,38 +347,38 @@ function setup()
 	// Key "Up Arrow Key".
 	up.press = () =>
 	{
-		goingup = true;
+		upArrowPressed = true;
 	};
 	up.release = () =>
 	{
-		goingup = false;
+		upArrowPressed = false;
 	};
 	// Key "Down Arrow Key".
 	down.press = () =>
 	{
-		goingdown = true;
+		downArrowPressed = true;
 	};
 	down.release = () =>
 	{
-		goingdown = false;
+		downArrowPressed = false;
 	};
 	// Key "Left Arrow Key".
 	left.press = () =>
 	{
-		goingleft = true;
+		leftArrowPressed = true;
 	};
 	left.release = () =>
 	{
-		goingleft = false;
+		leftArrowPressed = false;
 	};
 	// Key "Right Arrow Key".
 	right.press = () =>
 	{
-		goingright = true;
+		rightArrowPressed = true;
 	};
 	right.release = () =>
 	{
-		goingright = false;
+		rightArrowPressed = false;
 	};
 	state = play;
 	app.ticker.add(delta => gameLoop(delta));
@@ -350,11 +386,124 @@ function setup()
 
 function updateStatus()
 {
+	// PS4 Gamepad
+	if (!haveEvents) {
+		scangamepads();
+	}
+	var i = 0;
+	var j;
+
+	for (j in controllers) {
+		var controller = controllers[j];
+		var d = document.getElementById("controller" + j);
+		var buttons = d.getElementsByClassName("button");
+		for (i = 0; i < controller.buttons.length; i++) {
+			var b = buttons[i];
+			var val = controller.buttons[i];
+			var pressed = val == 1.0;
+			if (typeof(val) == "object") {
+				pressed = val.pressed;
+				val = val.value;
+			}
+			var pct = Math.round(val * 100) + "%";
+			b.style.backgroundSize = pct + " " + pct;
+			if (pressed) {
+				b.className = "button pressed";
+			} else {
+				b.className = "button";
+			}
+		}
+		var axes = d.getElementsByClassName("axis");
+		for (i = 0; i < controller.axes.length; i++) {
+			var a = axes[i];
+			a.innerHTML = i + ": " + controller.axes[i].toFixed(4);
+			a.setAttribute("value", controller.axes[i] + 1);
+		}
+	}
 	requestAnimationFrame(updateStatus);
+}
+
+// PS4 Gamepad
+function scangamepads() {
+	var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+	for (var i = 0; i < gamepads.length; i++) {
+		if (gamepads[i]) {
+			if (gamepads[i].index in controllers) {
+				controllers[gamepads[i].index] = gamepads[i];
+			} else {
+				addgamepad(gamepads[i]);
+			}
+		}
+	}
 }
 
 function gameLoop(delta)
 {
+	// PS4 Gamepad
+	if(gamepadpresent) {
+		gamepadXPressed = false;
+		gamepadOPressed = false;
+		gamepadSquarePressed = false;
+		gamepadTrianglePressed = false;
+		gamepadLeftStickPushedUp = false;
+		gamepadLeftStickPushedDown = false;
+		gamepadLeftStickPushedLeft = false;
+		gamepadLeftStickPushedRight = false;
+		if(navigator.webkitGetGamepads) {
+			var gp = navigator.webkitGetGamepads()[0];
+			if(gp.buttons[0] == 1) {
+				gamepadXPressed = true;
+				console.log("** GAMEPAD X BUTTON PRESSED **");
+			}
+			if(gp.buttons[1] == 1) {
+				gamepadOPressed = true;
+				console.log("** GAMEPAD O BUTTON PRESSED **");
+			}
+			if(gp.buttons[2] == 1) {
+				gamepadSquarePressed = true;
+				console.log("** GAMEPAD SQUARE BUTTON PRESSED **");
+			}
+			if(gp.buttons[3] == 1) {
+				gamepadTrianglePressed = true;
+				console.log("** GAMEPAD TRIANGLE BUTTON PRESSED **");
+			}
+		}
+		else {
+			var gp = navigator.getGamepads()[0];
+			if(gp.buttons[0].value > 0 || gp.buttons[0].pressed == true) {
+				gamepadXPressed = true;
+				console.log("** GAMEPAD X BUTTON PRESSED **");
+			}
+			if(gp.buttons[1].value > 0 || gp.buttons[1].pressed == true) {
+				gamepadOPressed = true;
+				console.log("** GAMEPAD O BUTTON PRESSED **");
+			}
+			if(gp.buttons[2].value > 0 || gp.buttons[2].pressed == true) {
+				gamepadSquarePressed = true;
+				console.log("** GAMEPAD SQUARE BUTTON PRESSED **");
+			}
+			if(gp.buttons[3].value > 0 || gp.buttons[3].pressed == true) {
+				gamepadTrianglePressed = true;
+				console.log("** GAMEPAD TRIANGLE BUTTON PRESSED **");
+			}
+			if(gp.axes[0] < -0.2) {
+				gamepadLeftStickPushedLeft = true;
+				console.log("** GAMEPAD STICK PUSHED LEFT **");
+			}
+			if(gp.axes[0] > 0.6) {
+				gamepadLeftStickPushedRight = true;
+				console.log("** GAMEPAD STICK PUSHED RIGHT **");
+			}
+			if(gp.axes[1] < -0.2) {
+				gamepadLeftStickPushedUp = true;
+				console.log("** GAMEPAD STICK PUSHED UP **");
+			}
+			if(gp.axes[1] > 0.6) {
+				gamepadLeftStickPushedDown = true;
+				console.log("** GAMEPAD STICK PUSHED DOWN **");
+			}
+		}
+	}
 	state(delta);
 }
 
@@ -682,7 +831,7 @@ function doTitleStuff() {
 	if(titleScrollTextX < -5600) {
 		titleScrollTextX = 1910;
 	}
-	if(spacePressed) {
+	if(spacePressed || gamepadXPressed) {
 		snd_sillyman001.pause();
 		currentScreen = 1;
 		playerX = 50;
@@ -711,7 +860,7 @@ function doGameStuff() {
 	var playerMoving = false;
 	if(playerFaceDir != 0) playerActualX -= 50;
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_backgroundSprite, 0, 0);
-	if(playerState == 0 && dPressed && !mustReleaseKeyD) {
+	if(playerState == 0 && (dPressed || gamepadTrianglePressed) && !mustReleaseKeyD) {
 		// DEBUG KEY: Player got hit.
 		mustReleaseKeyD = true;
 		playerState = 4;
@@ -729,25 +878,25 @@ function doGameStuff() {
 			snd_sillyman005.play();
 		}
 	}
-	if(zPressed && playerState == 0) {
+	if((zPressed || gamepadXPressed) && playerState == 0) {
 		jumpDeltaPos = 0;
 		playerState = 1;
 		snd_sillyman006.load();
 		snd_sillyman006.play();
 	}
-	if(playerState != 1 && playerState != 4 && playerState != 5 && xPressed && !mustReleaseKeyX) {
+	if(playerState != 1 && playerState != 4 && playerState != 5 && (xPressed || gamepadSquarePressed) && !mustReleaseKeyX) {
 		mustReleaseKeyX = true;
 		playerState = 2;
 		snd_sillyman002.load();
 		snd_sillyman002.play();
 	}
-	if(playerState != 1 && playerState != 4 && playerState != 5 && cPressed && !mustReleaseKeyC) {
+	if(playerState != 1 && playerState != 4 && playerState != 5 && (cPressed || gamepadOPressed) && !mustReleaseKeyC) {
 		mustReleaseKeyC = true;
 		playerState = 3;
 		snd_sillyman003.load();
 		snd_sillyman003.play();
 	}
-	if(!cPressed && !dPressed && !xPressed) {
+	if(!cPressed && !dPressed && !xPressed && !gamepadTrianglePressed && !gamepadSquarePressed && !gamepadOPressed) {
 		mustReleaseKeyX = false;
 		mustReleaseKeyC = false;
 		mustReleaseKeyD = false;
@@ -756,23 +905,23 @@ function doGameStuff() {
 		}
 	}
 	if(playerState == 0) {
-		if(goingup) {
+		if(upArrowPressed || gamepadLeftStickPushedUp) {
 			playerMoving = true;
 			playerY -= playerMovementSpeed;
 			if(playerY < -5) playerY = -5;
 		}
-		if(goingdown) {
+		if(downArrowPressed || gamepadLeftStickPushedDown) {
 			playerMoving = true;
 			playerY += playerMovementSpeed;
 			if(playerY > 445) playerY = 445;
 		}
-		if(goingleft) {
+		if(leftArrowPressed || gamepadLeftStickPushedLeft) {
 			playerFaceDir = 1;
 			playerMoving = true;
 			playerX -= playerMovementSpeed;
 			if(playerX < screenLeftBoundary) playerX = screenLeftBoundary;
 		}
-		if(goingright) {
+		if(rightArrowPressed || gamepadLeftStickPushedRight) {
 			playerFaceDir = 0;
 			playerMoving = true;
 			playerX += playerMovementSpeed;
@@ -955,5 +1104,10 @@ function keyboard(keyCode)
 	};
 	window.addEventListener("keydown", key.downHandler.bind(key), false);
 	window.addEventListener("keyup", key.upHandler.bind(key), false);
+	window.addEventListener("gamepadconnected", connecthandler);
+	window.addEventListener("gamepaddisconnected", disconnecthandler);
+	if (!haveEvents) {
+		setInterval(scangamepads, 500);
+	}
 	return key;
 }
