@@ -166,10 +166,10 @@ var gamepadXPressed                          = false;                          /
 var gamepadOPressed                          = false;                          // PS4 Gamepad
 var gamepadSquarePressed                     = false;                          // PS4 Gamepad
 var gamepadTrianglePressed                   = false;                          // PS4 Gamepad
-var gamepadLeftStickPushedUp                 = false;                          // PS4 Gamepad
-var gamepadLeftStickPushedDown               = false;                          // PS4 Gamepad
-var gamepadLeftStickPushedLeft               = false;                          // PS4 Gamepad
-var gamepadLeftStickPushedRight              = false;                          // PS4 Gamepad
+var gamepadUpPressed                         = false;                          // PS4 Gamepad
+var gamepadDownPressed                       = false;                          // PS4 Gamepad
+var gamepadLeftPressed                       = false;                          // PS4 Gamepad
+var gamepadRightPressed                      = false;                          // PS4 Gamepad
 var gamepadpresent                           = false;                          // PS4 Gamepad
 var haveEvents                               = 'ongamepadconnected' in window; // PS4 Gamepad
 var controllers                              = {};                             // PS4 Gamepad
@@ -441,14 +441,31 @@ function gameLoop(delta)
 {
 	// PS4 Gamepad
 	if(gamepadpresent) {
+		/*
+		PS4 Gamepad buttons property:
+		buttons[0] = X Button
+		buttons[1] = O Button
+		buttons[2] = Square Button
+		buttons[3] = Triangle Button
+		buttons[4] = L1 Shoulder Button
+		buttons[5] = R1 Shoulder Button
+		buttons[6] = L2 Shoulder Button
+		buttons[7] = R2 Shoulder Button
+		buttons[8] = SHARE Button
+		buttons[9] = OPTIONS Button
+		buttons[12] = Up Arrow
+		buttons[13] = Down Arrow
+		buttons[14] = Left Arrow
+		buttons[15] = Right Arrow
+		*/
 		gamepadXPressed = false;
 		gamepadOPressed = false;
 		gamepadSquarePressed = false;
 		gamepadTrianglePressed = false;
-		gamepadLeftStickPushedUp = false;
-		gamepadLeftStickPushedDown = false;
-		gamepadLeftStickPushedLeft = false;
-		gamepadLeftStickPushedRight = false;
+		gamepadUpPressed = false;
+		gamepadDownPressed = false;
+		gamepadLeftPressed = false;
+		gamepadRightPressed = false;
 		if(navigator.webkitGetGamepads) {
 			var gp = navigator.webkitGetGamepads()[0];
 			if(gp.buttons[0] == 1) {
@@ -486,21 +503,21 @@ function gameLoop(delta)
 				gamepadTrianglePressed = true;
 				console.log("** GAMEPAD TRIANGLE BUTTON PRESSED **");
 			}
-			if(gp.axes[0] < -0.2) {
-				gamepadLeftStickPushedLeft = true;
-				console.log("** GAMEPAD STICK PUSHED LEFT **");
+			if(gp.axes[0] < -0.2 || gp.buttons[14].value > 0 || gp.buttons[14].pressed == true) {
+				gamepadLeftPressed = true;
+				console.log("** GAMEPAD LEFT DIRECTION PRESSED **");
 			}
-			if(gp.axes[0] > 0.6) {
-				gamepadLeftStickPushedRight = true;
-				console.log("** GAMEPAD STICK PUSHED RIGHT **");
+			if(gp.axes[0] > 0.6 || gp.buttons[15].value > 0 || gp.buttons[15].pressed == true) {
+				gamepadRightPressed = true;
+				console.log("** GAMEPAD RIGHT DIRECTION PRESSED **");
 			}
-			if(gp.axes[1] < -0.2) {
-				gamepadLeftStickPushedUp = true;
-				console.log("** GAMEPAD STICK PUSHED UP **");
+			if(gp.axes[1] < -0.2 || gp.buttons[12].value > 0 || gp.buttons[12].pressed == true) {
+				gamepadUpPressed = true;
+				console.log("** GAMEPAD UP DIRECTION PRESSED **");
 			}
-			if(gp.axes[1] > 0.6) {
-				gamepadLeftStickPushedDown = true;
-				console.log("** GAMEPAD STICK PUSHED DOWN **");
+			if(gp.axes[1] > 0.6 || gp.buttons[13].value > 0 || gp.buttons[13].pressed == true) {
+				gamepadDownPressed = true;
+				console.log("** GAMEPAD DOWN DIRECTION PRESSED **");
 			}
 		}
 	}
@@ -905,23 +922,23 @@ function doGameStuff() {
 		}
 	}
 	if(playerState == 0) {
-		if(upArrowPressed || gamepadLeftStickPushedUp) {
+		if(upArrowPressed || gamepadUpPressed) {
 			playerMoving = true;
 			playerY -= playerMovementSpeed;
 			if(playerY < -5) playerY = -5;
 		}
-		if(downArrowPressed || gamepadLeftStickPushedDown) {
+		if(downArrowPressed || gamepadDownPressed) {
 			playerMoving = true;
 			playerY += playerMovementSpeed;
 			if(playerY > 445) playerY = 445;
 		}
-		if(leftArrowPressed || gamepadLeftStickPushedLeft) {
+		if(leftArrowPressed || gamepadLeftPressed) {
 			playerFaceDir = 1;
 			playerMoving = true;
 			playerX -= playerMovementSpeed;
 			if(playerX < screenLeftBoundary) playerX = screenLeftBoundary;
 		}
-		if(rightArrowPressed || gamepadLeftStickPushedRight) {
+		if(rightArrowPressed || gamepadRightPressed) {
 			playerFaceDir = 0;
 			playerMoving = true;
 			playerX += playerMovementSpeed;
