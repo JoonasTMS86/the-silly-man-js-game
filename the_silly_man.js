@@ -799,7 +799,6 @@ window.onload = function() {
 };
 
 function updateEnergyBar() {
-	//gfx_energyBarCtx.drawImage(gfx_energybar1Buffer, 0, 0);
 	var energyBar1 = gfx_energybar1Buffer;
 	var energyBar2 = gfx_energybar1Buffer;
 	var energyBar3 = gfx_energybar1Buffer;
