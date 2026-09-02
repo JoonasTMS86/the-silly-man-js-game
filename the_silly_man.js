@@ -162,6 +162,46 @@ var gfx_energybar3Sdata                      = gfx_energybar3Ctx.createImageData
 var gfx_energybar3Sprite                     = document.getElementById("gfx_energybar3");
 var gfx_energyBarBuffer                      = document.getElementById("gfx_energyBarBuffer");
 var gfx_energyBarCtx                         = gfx_energyBarBuffer.getContext("2d");
+var gfx_enemy1_flyingkickeBuffer             = document.getElementById("gfx_enemy1_flyingkickeBuffer");
+var gfx_enemy1_flyingkickeCtx                = gfx_enemy1_flyingkickeBuffer.getContext("2d");
+var gfx_enemy1_flyingkickeSdata              = gfx_enemy1_flyingkickeCtx.createImageData(228, 345);
+var gfx_enemy1_flyingkickeSprite             = document.getElementById("gfx_enemy1_flyingkicke");
+var gfx_enemy1_kickeBuffer                   = document.getElementById("gfx_enemy1_kickeBuffer");
+var gfx_enemy1_kickeCtx                      = gfx_enemy1_kickeBuffer.getContext("2d");
+var gfx_enemy1_kickeSdata                    = gfx_enemy1_kickeCtx.createImageData(228, 345);
+var gfx_enemy1_kickeSprite                   = document.getElementById("gfx_enemy1_kicke");
+var gfx_enemy1_knockedbackeBuffer            = document.getElementById("gfx_enemy1_knockedbackeBuffer");
+var gfx_enemy1_knockedbackeCtx               = gfx_enemy1_knockedbackeBuffer.getContext("2d");
+var gfx_enemy1_knockedbackeSdata             = gfx_enemy1_knockedbackeCtx.createImageData(228, 345);
+var gfx_enemy1_knockedbackeSprite            = document.getElementById("gfx_enemy1_knockedbacke");
+var gfx_enemy1_walke1Buffer                  = document.getElementById("gfx_enemy1_walke1Buffer");
+var gfx_enemy1_walke1Ctx                     = gfx_enemy1_walke1Buffer.getContext("2d");
+var gfx_enemy1_walke1Sdata                   = gfx_enemy1_walke1Ctx.createImageData(228, 345);
+var gfx_enemy1_walke1Sprite                  = document.getElementById("gfx_enemy1_walke1");
+var gfx_enemy1_walke2Buffer                  = document.getElementById("gfx_enemy1_walke2Buffer");
+var gfx_enemy1_walke2Ctx                     = gfx_enemy1_walke2Buffer.getContext("2d");
+var gfx_enemy1_walke2Sdata                   = gfx_enemy1_walke2Ctx.createImageData(228, 345);
+var gfx_enemy1_walke2Sprite                  = document.getElementById("gfx_enemy1_walke2");
+var gfx_enemy1_flyingkickwBuffer             = document.getElementById("gfx_enemy1_flyingkickwBuffer");
+var gfx_enemy1_flyingkickwCtx                = gfx_enemy1_flyingkickwBuffer.getContext("2d");
+var gfx_enemy1_flyingkickwSdata              = gfx_enemy1_flyingkickwCtx.createImageData(228, 345);
+var gfx_enemy1_flyingkickwSprite             = document.getElementById("gfx_enemy1_flyingkickw");
+var gfx_enemy1_kickwBuffer                   = document.getElementById("gfx_enemy1_kickwBuffer");
+var gfx_enemy1_kickwCtx                      = gfx_enemy1_kickwBuffer.getContext("2d");
+var gfx_enemy1_kickwSdata                    = gfx_enemy1_kickwCtx.createImageData(228, 345);
+var gfx_enemy1_kickwSprite                   = document.getElementById("gfx_enemy1_kickw");
+var gfx_enemy1_knockedbackwBuffer            = document.getElementById("gfx_enemy1_knockedbackwBuffer");
+var gfx_enemy1_knockedbackwCtx               = gfx_enemy1_knockedbackwBuffer.getContext("2d");
+var gfx_enemy1_knockedbackwSdata             = gfx_enemy1_knockedbackwCtx.createImageData(228, 345);
+var gfx_enemy1_knockedbackwSprite            = document.getElementById("gfx_enemy1_knockedbackw");
+var gfx_enemy1_walkw1Buffer                  = document.getElementById("gfx_enemy1_walkw1Buffer");
+var gfx_enemy1_walkw1Ctx                     = gfx_enemy1_walkw1Buffer.getContext("2d");
+var gfx_enemy1_walkw1Sdata                   = gfx_enemy1_walkw1Ctx.createImageData(228, 345);
+var gfx_enemy1_walkw1Sprite                  = document.getElementById("gfx_enemy1_walkw1");
+var gfx_enemy1_walkw2Buffer                  = document.getElementById("gfx_enemy1_walkw2Buffer");
+var gfx_enemy1_walkw2Ctx                     = gfx_enemy1_walkw2Buffer.getContext("2d");
+var gfx_enemy1_walkw2Sdata                   = gfx_enemy1_walkw2Ctx.createImageData(228, 345);
+var gfx_enemy1_walkw2Sprite                  = document.getElementById("gfx_enemy1_walkw2");
 var gamepadXPressed                          = false;                          // PS4 Gamepad
 var gamepadOPressed                          = false;                          // PS4 Gamepad
 var gamepadSquarePressed                     = false;                          // PS4 Gamepad
@@ -657,6 +697,16 @@ window.onload = function() {
 	gfx_energybar1Ctx.drawImage(gfx_energybar1Sprite, 0, 0);
 	gfx_energybar2Ctx.drawImage(gfx_energybar2Sprite, 0, 0);
 	gfx_energybar3Ctx.drawImage(gfx_energybar3Sprite, 0, 0);
+	gfx_enemy1_flyingkickeCtx.drawImage(gfx_enemy1_flyingkickeSprite, 0, 0);
+	gfx_enemy1_kickeCtx.drawImage(gfx_enemy1_kickeSprite, 0, 0);
+	gfx_enemy1_knockedbackeCtx.drawImage(gfx_enemy1_knockedbackeSprite, 0, 0);
+	gfx_enemy1_walke1Ctx.drawImage(gfx_enemy1_walke1Sprite, 0, 0);
+	gfx_enemy1_walke2Ctx.drawImage(gfx_enemy1_walke2Sprite, 0, 0);
+	gfx_enemy1_flyingkickwCtx.drawImage(gfx_enemy1_flyingkickwSprite, 0, 0);
+	gfx_enemy1_kickwCtx.drawImage(gfx_enemy1_kickwSprite, 0, 0);
+	gfx_enemy1_knockedbackwCtx.drawImage(gfx_enemy1_knockedbackwSprite, 0, 0);
+	gfx_enemy1_walkw1Ctx.drawImage(gfx_enemy1_walkw1Sprite, 0, 0);
+	gfx_enemy1_walkw2Ctx.drawImage(gfx_enemy1_walkw2Sprite, 0, 0);
 
 	gfx_gametitleletter1Sdata = gfx_gametitleletter1Ctx.getImageData(0, 0, gfx_gametitleletter1Buffer.width, gfx_gametitleletter1Buffer.height);
 	gfx_gametitleletter2Sdata = gfx_gametitleletter2Ctx.getImageData(0, 0, gfx_gametitleletter2Buffer.width, gfx_gametitleletter2Buffer.height);
@@ -691,6 +741,16 @@ window.onload = function() {
 	gfx_energybar1Sdata = gfx_energybar1Ctx.getImageData(0, 0, gfx_energybar1Buffer.width, gfx_energybar1Buffer.height);
 	gfx_energybar2Sdata = gfx_energybar2Ctx.getImageData(0, 0, gfx_energybar2Buffer.width, gfx_energybar2Buffer.height);
 	gfx_energybar3Sdata = gfx_energybar3Ctx.getImageData(0, 0, gfx_energybar3Buffer.width, gfx_energybar3Buffer.height);
+	gfx_enemy1_flyingkickeSdata = gfx_enemy1_flyingkickeCtx.getImageData(0, 0, gfx_enemy1_flyingkickeBuffer.width, gfx_enemy1_flyingkickeBuffer.height);
+	gfx_enemy1_kickeSdata = gfx_enemy1_kickeCtx.getImageData(0, 0, gfx_enemy1_kickeBuffer.width, gfx_enemy1_kickeBuffer.height);
+	gfx_enemy1_knockedbackeSdata = gfx_enemy1_knockedbackeCtx.getImageData(0, 0, gfx_enemy1_knockedbackeBuffer.width, gfx_enemy1_knockedbackeBuffer.height);
+	gfx_enemy1_walke1Sdata = gfx_enemy1_walke1Ctx.getImageData(0, 0, gfx_enemy1_walke1Buffer.width, gfx_enemy1_walke1Buffer.height);
+	gfx_enemy1_walke2Sdata = gfx_enemy1_walke2Ctx.getImageData(0, 0, gfx_enemy1_walke2Buffer.width, gfx_enemy1_walke2Buffer.height);
+	gfx_enemy1_flyingkickwSdata = gfx_enemy1_flyingkickwCtx.getImageData(0, 0, gfx_enemy1_flyingkickwBuffer.width, gfx_enemy1_flyingkickwBuffer.height);
+	gfx_enemy1_kickwSdata = gfx_enemy1_kickwCtx.getImageData(0, 0, gfx_enemy1_kickwBuffer.width, gfx_enemy1_kickwBuffer.height);
+	gfx_enemy1_knockedbackwSdata = gfx_enemy1_knockedbackwCtx.getImageData(0, 0, gfx_enemy1_knockedbackwBuffer.width, gfx_enemy1_knockedbackwBuffer.height);
+	gfx_enemy1_walkw1Sdata = gfx_enemy1_walkw1Ctx.getImageData(0, 0, gfx_enemy1_walkw1Buffer.width, gfx_enemy1_walkw1Buffer.height);
+	gfx_enemy1_walkw2Sdata = gfx_enemy1_walkw2Ctx.getImageData(0, 0, gfx_enemy1_walkw2Buffer.width, gfx_enemy1_walkw2Buffer.height);
 
 	doSpriteTransparency(gfx_gametitleletter1Ctx, gfx_gametitleletter1Buffer, gfx_gametitleletter1Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleletter2Ctx, gfx_gametitleletter2Buffer, gfx_gametitleletter2Sdata, 255, 255, 255);
@@ -725,6 +785,16 @@ window.onload = function() {
 	doSpriteTransparency(gfx_energybar1Ctx, gfx_energybar1Buffer, gfx_energybar1Sdata, 255, 119, 0);
 	doSpriteTransparency(gfx_energybar2Ctx, gfx_energybar2Buffer, gfx_energybar2Sdata, 255, 119, 0);
 	doSpriteTransparency(gfx_energybar3Ctx, gfx_energybar3Buffer, gfx_energybar3Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_flyingkickeCtx, gfx_enemy1_flyingkickeBuffer, gfx_enemy1_flyingkickeSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_kickeCtx, gfx_enemy1_kickeBuffer, gfx_enemy1_kickeSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_knockedbackeCtx, gfx_enemy1_knockedbackeBuffer, gfx_enemy1_knockedbackeSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_walke1Ctx, gfx_enemy1_walke1Buffer, gfx_enemy1_walke1Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_walke2Ctx, gfx_enemy1_walke2Buffer, gfx_enemy1_walke2Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_flyingkickwCtx, gfx_enemy1_flyingkickwBuffer, gfx_enemy1_flyingkickwSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_kickwCtx, gfx_enemy1_kickwBuffer, gfx_enemy1_kickwSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_knockedbackwCtx, gfx_enemy1_knockedbackwBuffer, gfx_enemy1_knockedbackwSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_walkw1Ctx, gfx_enemy1_walkw1Buffer, gfx_enemy1_walkw1Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_walkw2Ctx, gfx_enemy1_walkw2Buffer, gfx_enemy1_walkw2Sdata, 255, 119, 0);
 
 };
 
