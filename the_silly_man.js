@@ -226,6 +226,13 @@ var titleletterCoords                        = [
 	0, 0,
 	0, 0
 ];
+/*
+All enemies have common properties. They are (in this order):
+ - X coord
+ - Y coord
+ - Movement speed
+*/
+var enemy1Properties                         = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 const snd_sillyman001          = new Audio("sillyman001.wav");
 const snd_sillyman002          = new Audio("sillyman002.wav");
@@ -798,6 +805,25 @@ window.onload = function() {
 
 };
 
+function moveEnemy1() {
+	if(enemy1Properties[0] < (playerX - 100)) {
+		enemy1Properties[0] += enemy1Properties[2];
+		if(enemy1Properties[0] > (playerX - 100)) enemy1Properties[0] = playerX - 100;
+	}
+	if(enemy1Properties[0] > (playerX + 35)) {
+		enemy1Properties[0] -= enemy1Properties[2];
+		if(enemy1Properties[0] < (playerX + 35)) enemy1Properties[0] = playerX + 35;
+	}
+	if(enemy1Properties[1] < playerY) {
+		enemy1Properties[1] += enemy1Properties[2];
+		if(enemy1Properties[1] > playerY) enemy1Properties[1] = playerY;
+	}
+	if(enemy1Properties[1] > playerY) {
+		enemy1Properties[1] -= enemy1Properties[2];
+		if(enemy1Properties[1] < playerY) enemy1Properties[1] = playerY;
+	}
+}
+
 function updateEnergyBar() {
 	var energyBar1 = gfx_energybar1Buffer;
 	var energyBar2 = gfx_energybar1Buffer;
@@ -918,6 +944,7 @@ function doTitleStuff() {
 		titleScrollTextX = 1910;
 	}
 	if(spacePressed || gamepadXPressed) {
+		// Began a new game. Initialize the new game.
 		snd_sillyman001.pause();
 		currentScreen = 1;
 		playerX = 50;
@@ -928,6 +955,9 @@ function doTitleStuff() {
 		energy = 10;
 		lives = 3;
 		score = 0;
+		enemy1Properties[0] = 1600;
+		enemy1Properties[1] = 300;
+		enemy1Properties[2] = 3;
 		updateEnergyBar();
 	}
 }
@@ -1113,6 +1143,16 @@ function doGameStuff() {
 			}
 		}
 	}
+	// Draw all the enemies.
+	var spriteToUse = gfx_enemy1_kickwBuffer;
+	if(enemy1Properties[0] < (playerX + 35)) {
+		spriteToUse = gfx_enemy1_kickeBuffer;
+	}
+	gfxScaledToCurrentDeviceResolutionCtx.drawImage(spriteToUse, enemy1Properties[0], enemy1Properties[1]);
+
+	// Move all the enemies.
+	moveEnemy1();
+
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_energyBarBuffer, coordXOfEnergyBar, coordYOfEnergyBar);
 	gfxScaledToCurrentDeviceResolutionCtx.font = "70px Arial";
 	gfxScaledToCurrentDeviceResolutionCtx.fillStyle = "black";
