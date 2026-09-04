@@ -231,6 +231,9 @@ All enemies have common properties. They are (in this order):
  - X coord
  - Y coord
  - Movement speed
+ - Direction the enemy is facing (0 = E, 1 = W)
+ - Current sprite frame
+ - Sprite anim phase
 */
 var enemy1Properties                         = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -958,6 +961,9 @@ function doTitleStuff() {
 		enemy1Properties[0] = 1600;
 		enemy1Properties[1] = 300;
 		enemy1Properties[2] = 3;
+		enemy1Properties[3] = 1;
+		enemy1Properties[4] = 0;
+		enemy1Properties[5] = 0;
 		updateEnergyBar();
 	}
 }
@@ -1142,9 +1148,37 @@ function doGameStuff() {
 		}
 	}
 	// Draw all the enemies.
-	var spriteToUse = gfx_enemy1_kickwBuffer;
+	var spriteToUse;
 	if(enemy1Properties[0] < (playerX + 35)) {
-		spriteToUse = gfx_enemy1_kickeBuffer;
+		enemy1Properties[3] = 0;
+	}
+	else {
+		enemy1Properties[3] = 1;
+	}
+	if(enemy1Properties[3] == 0) {
+		switch(enemy1Properties[4]) {
+			case 0:
+				spriteToUse = gfx_enemy1_walke1Buffer;
+				break;
+			case 1:
+				spriteToUse = gfx_enemy1_walke2Buffer;
+				break;
+		}
+	}
+	else {
+		switch(enemy1Properties[4]) {
+			case 0:
+				spriteToUse = gfx_enemy1_walkw1Buffer;
+				break;
+			case 1:
+				spriteToUse = gfx_enemy1_walkw2Buffer;
+				break;
+		}
+	}
+	enemy1Properties[5]++;
+	if(enemy1Properties[5] >= 5) {
+		enemy1Properties[5] = 0;
+		enemy1Properties[4] ^= 1;
 	}
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(spriteToUse, enemy1Properties[0], enemy1Properties[1]);
 
