@@ -245,6 +245,7 @@ All enemies have common properties. They are (in this order):
  - Current state
  - Movement pixels left (when the enemy has been hit)
  - Movement speed (when the enemy is knocked back from your hit)
+ - Enemy HP
 */
 var enemy1Properties                         = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -255,6 +256,7 @@ const snd_sillyman004          = new Audio("sillyman004.wav");
 const snd_sillyman005          = new Audio("sillyman005.wav");
 const snd_sillyman006          = new Audio("sillyman006.wav");
 const snd_sillyman007          = new Audio("sillyman005.wav");
+const snd_sillyman008          = new Audio("sillyman004.wav");
 const titleletterDeltas        = [
 	-5, -5,
 	5, 0,
@@ -827,7 +829,7 @@ window.onload = function() {
 };
 
 function moveEnemy1() {
-	if(enemy1Properties[6] != 4) {
+	if(enemy1Properties[6] == 0) {
 		if(enemy1Properties[0] < (playerX - 100)) {
 			enemy1Properties[0] += enemy1Properties[2];
 			if(enemy1Properties[0] > (playerX - 100)) enemy1Properties[0] = playerX - 100;
@@ -852,25 +854,36 @@ function moveEnemy1() {
 // "dir" indicates the direction the enemy should be facing after being hit.
 // "enemyType" is the enemy type (numbers start from 0) that was hit.
 function hitEnemy(move, dir, enemyType) {
-	if(enemy1Properties[6] == 4) {
+	if(enemy1Properties[6] != 0) {
 		return;
 	}
-	snd_sillyman007.load();
-	snd_sillyman007.play();
 	switch(move) {
 		case 0:
 			enemy1Properties[8] = 11;
+			enemy1Properties[9] -= 2;
 			break;
 		case 1:
 			enemy1Properties[8] = 6;
+			enemy1Properties[9]--;
 			break;
 		case 2:
 			enemy1Properties[8] = 6;
+			enemy1Properties[9]--;
 			break;
 	}
-	enemy1Properties[3] = dir;
-	enemy1Properties[6] = 4;
-	enemy1Properties[7] = 0;
+	if(enemy1Properties[9] > 0) {
+		snd_sillyman007.load();
+		snd_sillyman007.play();
+		enemy1Properties[3] = dir;
+		enemy1Properties[6] = 4;
+		enemy1Properties[7] = 0;
+	}
+	else {
+		snd_sillyman008.load();
+		snd_sillyman008.play();
+		enemy1Properties[3] = dir;
+		enemy1Properties[6] = 5;
+	}
 }
 
 function updateEnergyBar() {
@@ -1004,12 +1017,14 @@ function doTitleStuff() {
 		energy = 10;
 		lives = 3;
 		score = 0;
-		enemy1Properties[0] = 1600;
-		enemy1Properties[1] = 300;
-		enemy1Properties[2] = 3;
-		enemy1Properties[3] = 1;
-		enemy1Properties[4] = 0;
-		enemy1Properties[5] = 0;
+		enemy1Properties[0] = 1600; // X coord
+		enemy1Properties[1] = 300;  // Y coord
+		enemy1Properties[2] = 3;    // Movement speed
+		enemy1Properties[3] = 1;    // Direction
+		enemy1Properties[4] = 0;    // Current sprite frame
+		enemy1Properties[5] = 0;    // Sprite anim phase
+		enemy1Properties[6] = 0;    // Current state
+		enemy1Properties[9] = 5;    // Health Points
 		updateEnergyBar();
 	}
 }
@@ -1259,7 +1274,13 @@ function doGameStuff() {
 	}
 	// Draw all the enemies.
 	var spriteToUse;
-	if(enemy1Properties[6] == 4) {
+	if(enemy1Properties[6] == 5) {
+		spriteToUse = gfx_enemy1_deadeBuffer;
+		if(enemy1Properties[3] == 1) {
+			spriteToUse = gfx_enemy1_deadwBuffer;
+		}
+	}
+	else if(enemy1Properties[6] == 4) {
 		if(enemy1Properties[3] == 0) {
 			spriteToUse = gfx_enemy1_knockedbackeBuffer;
 			enemy1Properties[0] += enemy1Properties[8];
