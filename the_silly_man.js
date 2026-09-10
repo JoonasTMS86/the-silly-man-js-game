@@ -202,6 +202,14 @@ var gfx_enemy1_walkw2Buffer                  = document.getElementById("gfx_enem
 var gfx_enemy1_walkw2Ctx                     = gfx_enemy1_walkw2Buffer.getContext("2d");
 var gfx_enemy1_walkw2Sdata                   = gfx_enemy1_walkw2Ctx.createImageData(228, 345);
 var gfx_enemy1_walkw2Sprite                  = document.getElementById("gfx_enemy1_walkw2");
+var gfx_enemy1_deadeBuffer                   = document.getElementById("gfx_enemy1_deadeBuffer");
+var gfx_enemy1_deadeCtx                      = gfx_enemy1_deadeBuffer.getContext("2d");
+var gfx_enemy1_deadeSdata                    = gfx_enemy1_deadeCtx.createImageData(268, 345);
+var gfx_enemy1_deadeSprite                   = document.getElementById("gfx_enemy1_deade");
+var gfx_enemy1_deadwBuffer                   = document.getElementById("gfx_enemy1_deadwBuffer");
+var gfx_enemy1_deadwCtx                      = gfx_enemy1_deadwBuffer.getContext("2d");
+var gfx_enemy1_deadwSdata                    = gfx_enemy1_deadwCtx.createImageData(268, 345);
+var gfx_enemy1_deadwSprite                   = document.getElementById("gfx_enemy1_deadw");
 var gamepadXPressed                          = false;                          // PS4 Gamepad
 var gamepadOPressed                          = false;                          // PS4 Gamepad
 var gamepadSquarePressed                     = false;                          // PS4 Gamepad
@@ -720,6 +728,8 @@ window.onload = function() {
 	gfx_enemy1_knockedbackwCtx.drawImage(gfx_enemy1_knockedbackwSprite, 0, 0);
 	gfx_enemy1_walkw1Ctx.drawImage(gfx_enemy1_walkw1Sprite, 0, 0);
 	gfx_enemy1_walkw2Ctx.drawImage(gfx_enemy1_walkw2Sprite, 0, 0);
+	gfx_enemy1_deadeCtx.drawImage(gfx_enemy1_deadeSprite, 0, 0);
+	gfx_enemy1_deadwCtx.drawImage(gfx_enemy1_deadwSprite, 0, 0);
 
 	gfx_gametitleletter1Sdata = gfx_gametitleletter1Ctx.getImageData(0, 0, gfx_gametitleletter1Buffer.width, gfx_gametitleletter1Buffer.height);
 	gfx_gametitleletter2Sdata = gfx_gametitleletter2Ctx.getImageData(0, 0, gfx_gametitleletter2Buffer.width, gfx_gametitleletter2Buffer.height);
@@ -764,6 +774,8 @@ window.onload = function() {
 	gfx_enemy1_knockedbackwSdata = gfx_enemy1_knockedbackwCtx.getImageData(0, 0, gfx_enemy1_knockedbackwBuffer.width, gfx_enemy1_knockedbackwBuffer.height);
 	gfx_enemy1_walkw1Sdata = gfx_enemy1_walkw1Ctx.getImageData(0, 0, gfx_enemy1_walkw1Buffer.width, gfx_enemy1_walkw1Buffer.height);
 	gfx_enemy1_walkw2Sdata = gfx_enemy1_walkw2Ctx.getImageData(0, 0, gfx_enemy1_walkw2Buffer.width, gfx_enemy1_walkw2Buffer.height);
+	gfx_enemy1_deadeSdata = gfx_enemy1_deadeCtx.getImageData(0, 0, gfx_enemy1_deadeBuffer.width, gfx_enemy1_deadeBuffer.height);
+	gfx_enemy1_deadwSdata = gfx_enemy1_deadwCtx.getImageData(0, 0, gfx_enemy1_deadwBuffer.width, gfx_enemy1_deadwBuffer.height);
 
 	doSpriteTransparency(gfx_gametitleletter1Ctx, gfx_gametitleletter1Buffer, gfx_gametitleletter1Sdata, 255, 255, 255);
 	doSpriteTransparency(gfx_gametitleletter2Ctx, gfx_gametitleletter2Buffer, gfx_gametitleletter2Sdata, 255, 255, 255);
@@ -808,6 +820,8 @@ window.onload = function() {
 	doSpriteTransparency(gfx_enemy1_knockedbackwCtx, gfx_enemy1_knockedbackwBuffer, gfx_enemy1_knockedbackwSdata, 255, 119, 0);
 	doSpriteTransparency(gfx_enemy1_walkw1Ctx, gfx_enemy1_walkw1Buffer, gfx_enemy1_walkw1Sdata, 255, 119, 0);
 	doSpriteTransparency(gfx_enemy1_walkw2Ctx, gfx_enemy1_walkw2Buffer, gfx_enemy1_walkw2Sdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_deadeCtx, gfx_enemy1_deadeBuffer, gfx_enemy1_deadeSdata, 255, 119, 0);
+	doSpriteTransparency(gfx_enemy1_deadwCtx, gfx_enemy1_deadwBuffer, gfx_enemy1_deadwSdata, 255, 119, 0);
 
 };
 
