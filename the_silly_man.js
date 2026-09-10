@@ -254,6 +254,7 @@ const snd_sillyman003          = new Audio("sillyman003.wav");
 const snd_sillyman004          = new Audio("sillyman004.wav");
 const snd_sillyman005          = new Audio("sillyman005.wav");
 const snd_sillyman006          = new Audio("sillyman006.wav");
+const snd_sillyman007          = new Audio("sillyman005.wav");
 const titleletterDeltas        = [
 	-5, -5,
 	5, 0,
@@ -854,6 +855,8 @@ function hitEnemy(move, dir, enemyType) {
 	if(enemy1Properties[6] == 4) {
 		return;
 	}
+	snd_sillyman007.load();
+	snd_sillyman007.play();
 	switch(move) {
 		case 0:
 			enemy1Properties[8] = 11;
