@@ -234,6 +234,9 @@ All enemies have common properties. They are (in this order):
  - Direction the enemy is facing (0 = E, 1 = W)
  - Current sprite frame
  - Sprite anim phase
+ - Current state
+ - Movement pixels left (when the enemy has been hit)
+ - Movement speed (when the enemy is knocked back from your hit)
 */
 var enemy1Properties                         = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -809,22 +812,48 @@ window.onload = function() {
 };
 
 function moveEnemy1() {
-	if(enemy1Properties[0] < (playerX - 100)) {
-		enemy1Properties[0] += enemy1Properties[2];
-		if(enemy1Properties[0] > (playerX - 100)) enemy1Properties[0] = playerX - 100;
+	if(enemy1Properties[6] != 4) {
+		if(enemy1Properties[0] < (playerX - 100)) {
+			enemy1Properties[0] += enemy1Properties[2];
+			if(enemy1Properties[0] > (playerX - 100)) enemy1Properties[0] = playerX - 100;
+		}
+		if(enemy1Properties[0] > (playerX + 35)) {
+			enemy1Properties[0] -= enemy1Properties[2];
+			if(enemy1Properties[0] < (playerX + 35)) enemy1Properties[0] = playerX + 35;
+		}
+		if(enemy1Properties[1] < playerY) {
+			enemy1Properties[1] += enemy1Properties[2];
+			if(enemy1Properties[1] > playerY) enemy1Properties[1] = playerY;
+		}
+		if(enemy1Properties[1] > playerY) {
+			enemy1Properties[1] -= enemy1Properties[2];
+			if(enemy1Properties[1] < playerY) enemy1Properties[1] = playerY;
+		}
 	}
-	if(enemy1Properties[0] > (playerX + 35)) {
-		enemy1Properties[0] -= enemy1Properties[2];
-		if(enemy1Properties[0] < (playerX + 35)) enemy1Properties[0] = playerX + 35;
+}
+
+// Your kick or punch connected with the enemy.
+// "move" indicates which move you used against the enemy: 0 = flying kick, 1 = kick, 2 = punch
+// "dir" indicates the direction the enemy should be facing after being hit.
+// "enemyType" is the enemy type (numbers start from 0) that was hit.
+function hitEnemy(move, dir, enemyType) {
+	if(enemy1Properties[6] == 4) {
+		return;
 	}
-	if(enemy1Properties[1] < playerY) {
-		enemy1Properties[1] += enemy1Properties[2];
-		if(enemy1Properties[1] > playerY) enemy1Properties[1] = playerY;
+	switch(move) {
+		case 0:
+			enemy1Properties[8] = 11;
+			break;
+		case 1:
+			enemy1Properties[8] = 6;
+			break;
+		case 2:
+			enemy1Properties[8] = 6;
+			break;
 	}
-	if(enemy1Properties[1] > playerY) {
-		enemy1Properties[1] -= enemy1Properties[2];
-		if(enemy1Properties[1] < playerY) enemy1Properties[1] = playerY;
-	}
+	enemy1Properties[3] = dir;
+	enemy1Properties[6] = 4;
+	enemy1Properties[7] = 0;
 }
 
 function updateEnergyBar() {
@@ -1007,16 +1036,62 @@ function doGameStuff() {
 		snd_sillyman006.play();
 	}
 	if(playerState != 1 && playerState != 4 && playerState != 5 && (xPressed || gamepadSquarePressed) && !mustReleaseKeyX) {
+		var footPos;
 		mustReleaseKeyX = true;
 		playerState = 2;
 		snd_sillyman002.load();
 		snd_sillyman002.play();
+		switch(playerFaceDir) {
+			case 0:
+				footPos = playerX + 127;
+				if(
+					(enemy1Properties[0] + 227) >= footPos &&
+					enemy1Properties[0] <= footPos &&
+					enemy1Properties[1] == playerY
+				) {
+					hitEnemy(1, 0, 0);
+				}
+				break;
+			case 1:
+				footPos = playerX + 23;
+				if(
+					(enemy1Properties[0] + 227) >= footPos &&
+					enemy1Properties[0] <= footPos &&
+					enemy1Properties[1] == playerY
+				) {
+					hitEnemy(1, 1, 0);
+				}
+				break;
+		}
 	}
 	if(playerState != 1 && playerState != 4 && playerState != 5 && (cPressed || gamepadOPressed) && !mustReleaseKeyC) {
+		var handPos;
 		mustReleaseKeyC = true;
 		playerState = 3;
 		snd_sillyman003.load();
 		snd_sillyman003.play();
+		switch(playerFaceDir) {
+			case 0:
+				handPos = playerX + 127;
+				if(
+					(enemy1Properties[0] + 227) >= handPos &&
+					enemy1Properties[0] <= handPos &&
+					enemy1Properties[1] == playerY
+				) {
+					hitEnemy(2, 0, 0);
+				}
+				break;
+			case 1:
+				handPos = playerX + 23;
+				if(
+					(enemy1Properties[0] + 227) >= handPos &&
+					enemy1Properties[0] <= handPos &&
+					enemy1Properties[1] == playerY
+				) {
+					hitEnemy(2, 1, 0);
+				}
+				break;
+		}
 	}
 	if(!cPressed && !dPressed && !xPressed && !gamepadTrianglePressed && !gamepadSquarePressed && !gamepadOPressed) {
 		mustReleaseKeyX = false;
@@ -1085,6 +1160,15 @@ function doGameStuff() {
 					break;
 				case 1:
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_flyingkickeBuffer, playerActualX, (playerY + jumpDeltasY[jumpDeltaPos]));
+					var footPos = playerX + 205;
+					if(
+						jumpDeltaPos < 15 &&
+						(enemy1Properties[0] + 227) >= footPos &&
+						enemy1Properties[0] <= footPos &&
+						enemy1Properties[1] == playerY
+					) {
+						hitEnemy(0, 0, 0);
+					}
 					playerX += jumpDeltasX[jumpDeltaPos];
 					if(playerX > screenRightBoundary) playerX = screenRightBoundary;
 					jumpDeltaPos++;
@@ -1119,6 +1203,15 @@ function doGameStuff() {
 					break;
 				case 1:
 					gfxScaledToCurrentDeviceResolutionCtx.drawImage(gfx_flyingkickwBuffer, playerActualX, (playerY + jumpDeltasY[jumpDeltaPos]));
+					var footPos = playerX + 22;
+					if(
+						jumpDeltaPos < 15 &&
+						(enemy1Properties[0] + 227) >= footPos &&
+						enemy1Properties[0] <= footPos &&
+						enemy1Properties[1] == playerY
+					) {
+						hitEnemy(0, 1, 0);
+					}
 					playerX -= jumpDeltasX[jumpDeltaPos];
 					if(playerX < screenLeftBoundary) playerX = screenLeftBoundary;
 					jumpDeltaPos++;
@@ -1149,36 +1242,58 @@ function doGameStuff() {
 	}
 	// Draw all the enemies.
 	var spriteToUse;
-	if(enemy1Properties[0] < (playerX + 35)) {
-		enemy1Properties[3] = 0;
-	}
-	else {
-		enemy1Properties[3] = 1;
-	}
-	if(enemy1Properties[3] == 0) {
-		switch(enemy1Properties[4]) {
-			case 0:
-				spriteToUse = gfx_enemy1_walke1Buffer;
-				break;
-			case 1:
-				spriteToUse = gfx_enemy1_walke2Buffer;
-				break;
+	if(enemy1Properties[6] == 4) {
+		if(enemy1Properties[3] == 0) {
+			spriteToUse = gfx_enemy1_knockedbackeBuffer;
+			enemy1Properties[0] += enemy1Properties[8];
+			if(enemy1Properties[0] > screenRightBoundary) enemy1Properties[0] = screenRightBoundary;
+			enemy1Properties[7]++;
+			if(enemy1Properties[7] >= 20) {
+				enemy1Properties[6] = 0;
+			}
+		}
+		else {
+			spriteToUse = gfx_enemy1_knockedbackwBuffer;
+			enemy1Properties[0] -= enemy1Properties[8];
+			if(enemy1Properties[0] < screenLeftBoundary) enemy1Properties[0] = screenLeftBoundary;
+			enemy1Properties[7]++;
+			if(enemy1Properties[7] >= 20) {
+				enemy1Properties[6] = 0;
+			}
 		}
 	}
 	else {
-		switch(enemy1Properties[4]) {
-			case 0:
-				spriteToUse = gfx_enemy1_walkw1Buffer;
-				break;
-			case 1:
-				spriteToUse = gfx_enemy1_walkw2Buffer;
-				break;
+		if(enemy1Properties[0] < (playerX + 35)) {
+			enemy1Properties[3] = 0;
 		}
-	}
-	enemy1Properties[5]++;
-	if(enemy1Properties[5] >= 5) {
-		enemy1Properties[5] = 0;
-		enemy1Properties[4] ^= 1;
+		else {
+			enemy1Properties[3] = 1;
+		}
+		if(enemy1Properties[3] == 0) {
+			switch(enemy1Properties[4]) {
+				case 0:
+					spriteToUse = gfx_enemy1_walke1Buffer;
+					break;
+				case 1:
+					spriteToUse = gfx_enemy1_walke2Buffer;
+					break;
+			}
+		}
+		else {
+			switch(enemy1Properties[4]) {
+				case 0:
+					spriteToUse = gfx_enemy1_walkw1Buffer;
+					break;
+				case 1:
+					spriteToUse = gfx_enemy1_walkw2Buffer;
+					break;
+			}
+		}
+		enemy1Properties[5]++;
+		if(enemy1Properties[5] >= 5) {
+			enemy1Properties[5] = 0;
+			enemy1Properties[4] ^= 1;
+		}
 	}
 	gfxScaledToCurrentDeviceResolutionCtx.drawImage(spriteToUse, enemy1Properties[0], enemy1Properties[1]);
 
